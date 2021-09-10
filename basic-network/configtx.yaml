@@ -1,0 +1,50 @@
+Organizations:
+
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererOrg
+        MSPDir: crypto-config/ordererOrganizations/bbip.com/msp
+
+    - &User1Org
+        Name: User1Org
+        ID: User1Org
+        MSPDir: crypto-config/peerOrganizations/user1.bbip.com/msp
+        AnchorPeers:
+            - Host: peer0.user1.bbip.com
+              Port: 7051
+
+Orderer: &OrdererDefaults
+
+    OrdererType: solo
+    Addresses:
+        - orderer.bbip.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+    Organizations:
+
+Application: &ApplicationDefaults
+    Organizations:
+    
+Profiles:
+
+    OrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *User1Org
+    Channel1:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *User1Org

@@ -1,0 +1,102 @@
+version: '2'
+
+networks:
+  bbip:
+
+services:
+  orderer.bbip.com:
+    container_name: orderer.bbip.com
+    image: hyperledger/fabric-orderer:1.4.4
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererOrg
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp/orderer/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+    ports:
+      - 7050:7050
+    volumes:
+        - ./config/:/etc/hyperledger/configtx
+        - ./crypto-config/ordererOrganizations/bbip.com/orderers/orderer.bbip.com/:/etc/hyperledger/msp/orderer
+    networks:
+      - bbip
+  peer0.user1.bbip.com:
+    container_name: peer0.user1.bbip.com
+    image: hyperledger/fabric-peer:1.4.4
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.user1.bbip.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=User1Org
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer0.user1.bbip.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.user1.bbip.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.user1.bbip.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.user1.bbip.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_bbip
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 7051:7051
+      - 7053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/user1.bbip.com/peers/peer0.user1.bbip.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/user1.bbip.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer.bbip.com
+    networks:
+      - bbip
+  peer1.user1.bbip.com:
+    container_name: peer1.user1.bbip.com
+    image: hyperledger/fabric-peer:1.4.4
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.user1.bbip.com
+      - CORE_LOGGING_PEER=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_LOCALMSPID=User1Org
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer1.user1.bbip.com:7051
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=net_bbip
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start
+    ports:
+      - 8051:7051
+      - 8053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/user1.bbip.com/peers/peer1.user1.bbip.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/user1.bbip.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+    depends_on:
+      - orderer.bbip.com
+    networks:
+      - bbip
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.user1.bbip.com:7051
+      - CORE_PEER_LOCALMSPID=User1Org
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/user1.bbip.com/users/Admin@user1.bbip.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/chaincode/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./config:/etc/hyperledger/configtx
+    networks:
+        - bbip

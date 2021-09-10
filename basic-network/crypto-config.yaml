@@ -1,0 +1,14 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: bbip.com
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: User1
+    Domain: user1.bbip.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+

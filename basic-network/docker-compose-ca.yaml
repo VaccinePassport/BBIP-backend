@@ -1,0 +1,22 @@
+version: '2'
+
+networks:
+  bbip:
+
+services:
+  ca.user1.bbip.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.user1.bbip.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.user1.bbip.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8d8efc160a253ea705b283b7058d259fbd6b0acacc5556fb941c367339224bd8_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/user1.bbip.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.user1.bbip.com
+    networks:
+      - bbip
+
