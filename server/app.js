@@ -19,9 +19,6 @@ const PORT = 8080;
 //const HOST = 'localhost';
 const HOST = '54.180.199.56';
 
-//const VERSION = 'v1';
-//app.use(`/api/${VERSION}/vaccincation`,[vaccincationRouter]);
-
 app.get('/', (req, res) => {
     res.send({ message: '연결이 성공했습니다.' });
 });
@@ -36,3 +33,4 @@ app.use(express.static(path.join(__dirname, './client')));
 http.listen(PORT, () => {
     console.log(`listening at http://${HOST}:${PORT}`);
 });
+

@@ -14,12 +14,18 @@ async function main() {
 
         const userExists = await wallet.exists('admin');
         if (!userExists) {
-            console.log('An identity for the user "admin" does not exist in the wallet');
+            console.log(
+                'An identity for the user "admin" does not exist in the wallet'
+            );
             console.log('Run the registUser.js application before retrying');
             return;
         }
         const gateway = new Gateway();
-        await gateway.connect(ccpPath, { wallet, identity: 'user1', discovery: { enabled: true, asLocalhost: true } });
+        await gateway.connect(ccpPath, {
+            wallet,
+            identity: 'admin',
+            discovery: { enabled: true, asLocalhost: true },
+        });
 
         const network = await gateway.getNetwork('channeluser1');
 
@@ -31,11 +37,16 @@ async function main() {
         var number = process.argv[5];
 
         // 이메일, 날짜, 백신종류, 백신차수
-        const result = await contract.submitTransaction('putCertificate', email, date, type, number);
+        const result = await contract.submitTransaction(
+            'putCertificate',
+            email,
+            date,
+            type,
+            number
+        );
         console.log('Transaction has been submitted, result is:', result);
 
         await gateway.disconnect();
-
     } catch (error) {
         console.error(`Failed to submit transaction: ${error}`);
         process.exit(1);

@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     birth: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
     gender: {
@@ -38,6 +38,15 @@ module.exports = function(sequelize, DataTypes) {
     device_token: {
       type: DataTypes.STRING(100),
       allowNull: true
+    },
+    qr_password: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    sign_up_verification: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,

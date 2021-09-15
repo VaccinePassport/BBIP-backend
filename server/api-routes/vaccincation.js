@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 var sdk = require('../sdk');
-const { user } = require("../models");
+const { user } = require('../models');
 //var ㅁㅁservice = require('../service/ㅁㅁ');
 
 
@@ -19,18 +19,23 @@ router.get('/', async (req, res, next) => {
     // 값 검사 필요, 중복 처리 필요
 
     // 이메일, 날짜, 백신종류, 백신차수
-    let args = [record.user_id, record.date, record.vaccine_type, record.vaccine_session];
+    let args = [
+        record.user_id,
+        record.date,
+        record.vaccine_type,
+        record.vaccine_session,
+    ];
     var result = await sdk.send(true, 'putCertificate', args); // true: res.send('success');
 
-    if(result == 'success'){
+    if (result == 'success') {
         res.status(201).send({});
-    }else{
-        res.status(400).send({ message: "알 수 없는 오류가 발생했습니다."});
+    } else {
+        res.status(400).send({ message: '알 수 없는 오류가 발생했습니다.' });
     }
 });
 
 router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
-    res.json({ 
+    res.json({
         date: '2021-08-16',
         location: '서울아산병원',
         vaccine_type: '화이자',
@@ -41,18 +46,16 @@ router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
 });
 
 router.get('/:userId', async (req, res, next) => {
-    var { userId } = req.params  //var vaccineIndex = req.params.vaccineIndex;
+    var { userId } = req.params; //var vaccineIndex = req.params.vaccineIndex;
 
     let args = [userId];
     var result = await sdk.send(false, 'getCertificateByUserId', args); // false: res.send(result.toString());
     var resultJSON = JSON.parse(result.toString('utf8'));
     var rJ = JSON.parse(result);
-    res.json(
-        {
-            records: rJ
-        }
-    );
-    
+    res.json({
+        records: rJ,
+    });
+
     /*
     res.json({
         records: [
@@ -83,6 +86,5 @@ router.get('/:userId', async (req, res, next) => {
         ],
     });*/
 });
-
 
 module.exports = router;
