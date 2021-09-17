@@ -32,7 +32,7 @@ router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
 
     let result = await sdk.send(false, 'getCertificateByCertKey', args); 
     let resultJSON = JSON.parse(result);
-    if (resultJSON.records == []) {
+    if (resultJSON.records == "") {
         res.send({});
     } else {
         res.send({

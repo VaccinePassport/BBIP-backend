@@ -81,8 +81,8 @@ func generateKey(APIstub shim.ChaincodeStubInterface, key string) []byte {
 // 특정인의 백신 이력 등록
 func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-   if len(args) != 4 {
-      return shim.Error("Incorrect number of arguments. Expecting 4")
+   if len(args) != 5 {
+      return shim.Error("Incorrect number of arguments. Expecting 5")
    }
 
    var certificateKey = CertificateKey{} // 새로 저장할 키
