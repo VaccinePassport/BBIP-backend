@@ -14,7 +14,7 @@ router.post('/', async (req, res, next) => {
         user_id,
         date,
         vaccine_type,
-        vaccine_session,
+        String(vaccine_session),
     ];
 
     let result = await sdk.send(true, 'putCertificate', args); // true: res.send('success');
@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
 router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
     let {vaccineIndex} = req.params
 
-    let args = [vaccineIndex];
+    let args = [String(vaccineIndex)];
     let result = await sdk.send(false, 'getCertificateByCertKey', args); 
     let resultJSON = JSON.parse(result);
     res.json({
