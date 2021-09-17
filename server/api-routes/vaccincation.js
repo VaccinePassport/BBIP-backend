@@ -9,12 +9,12 @@ router.post('/', async (req, res, next) => {
     let user_id = "test@naver.com"
 
     // 중복 체크 어떻게 할 것 인지?
-
+    
     let args = [
         user_id,
         date,
         vaccine_type,
-        vaccine_session,
+        String(vaccine_session),
     ];
 
     let result = await sdk.send(true, 'putCertificate', args); // true: res.send('success');
@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
 router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
     let {vaccineIndex} = req.params
 
-    let args = [vaccineIndex];
+    let args = [String(vaccineIndex)];
     let result = await sdk.send(false, 'getCertificateByCertKey', args); 
     let resultJSON = JSON.parse(result);
     res.json({
