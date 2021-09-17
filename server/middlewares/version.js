@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
         next();
     } else {
         res.status(400).send({
-            errorMessage: `현재 버전은 ${VERSION} 입니다.`,
+            message: `현재 버전은 ${VERSION} 입니다.`,
         });
         return;
     }
