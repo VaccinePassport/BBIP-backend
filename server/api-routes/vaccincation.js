@@ -9,7 +9,12 @@ router.post('/', async (req, res, next) => {
 
     // 중복 체크 어떻게 할 것 인지?
 
-    let args = [user_id, date, vaccine_type, String(vaccine_session), location];
+    let args = [
+        user_id,
+        date,
+        vaccine_type,
+        String(vaccine_session),
+    ];
 
     let result = await sdk.send(true, 'putCertificate', args); 
     console.log(result);
@@ -24,7 +29,8 @@ router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
     let { vaccineIndex } = req.params;
 
     let args = [String(vaccineIndex)];
-    let result = await sdk.send(false, 'getCertificateByCertKey', args);
+
+    let result = await sdk.send(false, 'getCertificateByCertKey', args); 
     let resultJSON = JSON.parse(result);
     if (resultJSON.records == []) {
         res.send({});
