@@ -1,7 +1,8 @@
 'use strict';
 
 const FabricCAServices = require('fabric-ca-client');
-const { Wallets, X509WalletMixin } = require('fabric-network');
+const { FileSystemWallet, X509WalletMixin } = require('fabric-network');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -24,7 +25,7 @@ async function main() {
         console.log('phase1');
 
         const walletPath = path.join(process.cwd(), '..', 'wallet');
-        const wallet = new Wallets(walletPath);
+        const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
         const adminExists = await wallet.exists('admin');
