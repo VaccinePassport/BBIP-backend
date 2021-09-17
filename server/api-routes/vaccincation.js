@@ -7,7 +7,7 @@ const { user } = require('../models');
 router.post('/', async (req, res, next) => {
     let { date, location, vaccine_type, vaccine_session } = req.body;
     let user_id = "test@naver.com"
-    
+
     // 중복 체크 어떻게 할 것 인지?
 
     let args = [
@@ -47,7 +47,7 @@ router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
     */
 });
 
-router.get('/:userId', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     let user_id = "test@naver.com"
 
     let args = [user_id];
