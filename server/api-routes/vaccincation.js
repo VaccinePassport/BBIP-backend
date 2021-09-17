@@ -18,7 +18,7 @@ router.post('/', async (req, res, next) => {
     ];
 
     let result = await sdk.send(true, 'putCertificate', args); // true: res.send('success');
-
+    console.log(result);
     if (result == 'success') {
         res.status(201).send({});
     } else {
