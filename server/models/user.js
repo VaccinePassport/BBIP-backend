@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     gender: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.STRING(20),
       allowNull: true
     },
     created_at: {
