@@ -35,6 +35,7 @@ async function main() {
         var date = process.argv[3];
         var type = process.argv[4];
         var number = process.argv[5];
+        var location = process.argv[6];
 
         // 이메일, 날짜, 백신종류, 백신차수
         const result = await contract.submitTransaction(
@@ -42,7 +43,8 @@ async function main() {
             email,
             date,
             type,
-            number
+            number,
+            location,
         );
         console.log('Transaction has been submitted, result is:', result);
 

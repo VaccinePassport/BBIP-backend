@@ -17,6 +17,7 @@ type VaccinationCertificate struct {
    Date string `json:"date"`
    VaccineType string `json:"vaccinetype"`
    VaccineNumber string `json:"vaccinenumber"`
+   Location string `json:"location"`
 }
 type CertificateKey struct {
    Key string
@@ -87,7 +88,7 @@ func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args
    var certificateKey = CertificateKey{} // 새로 저장할 키
    json.Unmarshal(generateKey(APIstub, latestKey), &certificateKey)
 
-   var certificate = VaccinationCertificate{UserId: args[0], Date: args[1], VaccineType: args[2], VaccineNumber: args[3]}
+   var certificate = VaccinationCertificate{UserId: args[0], Date: args[1], VaccineType: args[2], VaccineNumber: args[3], Location: args[4]}
    certificateJSON, _ := json.Marshal(certificate)
 
    var keyString = certificateKey.Key + strconv.Itoa(certificateKey.Idx)
