@@ -13,7 +13,7 @@ router.post('/', async (req, res, next) => {
         user_id,
         date,
         vaccine_type,
-        String(vaccine_session),
+        String(vaccine_session)
     ];
 
     let result = await sdk.send(true, 'putCertificate', args); 
