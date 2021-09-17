@@ -33,18 +33,18 @@ router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
 
     let result = await sdk.send(false, 'getCertificateByCertKey', args); 
     let resultJSON = JSON.parse(result);
-    if (resultJSON.records == "") {
+    if (resultJSON == []) {
         res.send({});
     } else {
         res.send({
-            date: resultJSON.records[0].record.date,
-            location: resultJSON.records[0].record.location,
-            vaccine_type: resultJSON.records[0].record.vaccinetype,
+            date: resultJSON.record.date,
+            location: resultJSON.record.location,
+            vaccine_type: resultJSON.record.vaccinetype,
             vaccine_session: parseInt(
-                resultJSON.records[0].record.veccinenumber
+                resultJSON.record.veccinenumber
             ),
-            user_id: resultJSON.records[0].record.userid,
-            vaccine_index: resultJSON.records[0].vaccineKey,
+            user_id: resultJSON.record.userid,
+            vaccine_index: resultJSON.vaccineKey,
         });
     }
 });
@@ -57,7 +57,7 @@ router.get('/', async (req, res, next) => {
     let resultJSON = JSON.parse(result);
 
     let vaccineList = [];
-    for (let vaccine of resultJSON.records) {
+    for (let vaccine of resultJSON) {
         vaccineList.push({
             date: vaccine.record.date,
             location: vaccine.record.location,
