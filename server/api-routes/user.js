@@ -3,12 +3,12 @@ const jwt = require('jsonwebtoken');
 const { jwtKey } = require('../config/config');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
-const { user } = require('../models');
+const { User } = require('../models');
 const userService = require('../services/user');
 
 router.get('/dbtest', async (req, res, next) => {
     try {
-        const users = await user.findAll();
+        const users = await User.findAll();
         res.json(users);
     } catch (error) {
         res.status(400).send({ message: 'DB not Connection' });
@@ -18,11 +18,12 @@ router.get('/dbtest', async (req, res, next) => {
 router.post('/join', async (req, res, next) => {
     let { user_id, phone, name, birth, gender } = req.body;
 
-    const existUsers = await user.findAll({
+    const existUsers = await User.findAll({
         where: {
             email: user_id,
         },
     });
+    
     if (existUsers.length) {
         res.status(400).send({
             message: '이미 가입된 이메일 입니다.',
@@ -33,20 +34,18 @@ router.post('/join', async (req, res, next) => {
     // 인증코드 생성
     let code = 'TEst12';
 
-    const newUser = await user.create({
+    const user = await User.create({
         email: user_id,
         phone: phone,
         name: name,
         birth: birth,
         gender: gender,
         verification_number: code,
-        created_at: new Date,
-        updated_at: new Date
     });
 
     // 이메일 전송
 
-    const token = jwt.sign({ userIdx: newUser.idx_user }, jwtKey);
+    const token = jwt.sign({ userIdx: user.idx_user }, jwtKey);
     res.status(201).send({
         token,
     });

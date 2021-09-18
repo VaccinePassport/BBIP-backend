@@ -9,15 +9,9 @@ router.post('/', async (req, res, next) => {
 
     // 중복 체크 어떻게 할 것 인지?
 
-    let args = [
-        user_id,
-        date,
-        vaccine_type,
-        String(vaccine_session),
-        location
-    ];
+    let args = [user_id, date, vaccine_type, String(vaccine_session), location];
 
-    let result = await sdk.send(true, 'putCertificate', args); 
+    let result = await sdk.send(true, 'putCertificate', args);
     console.log(result);
     if (result == 'success') {
         res.status(201).send({});
@@ -28,21 +22,23 @@ router.post('/', async (req, res, next) => {
 
 router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
     let { vaccineIndex } = req.params;
+    // const { email } = res.locals.user;
 
     let args = [String(vaccineIndex)];
 
-    let result = await sdk.send(false, 'getCertificateByCertKey', args); 
+    let result = await sdk.send(false, 'getCertificateByCertKey', args);
     let resultJSON = JSON.parse(result);
-    if (resultJSON[0].record == "") {
+
+    // userid랑 백신 userid 같지 않으면 ...
+
+    if (resultJSON[0].record == '') {
         res.send({});
     } else {
         res.send({
             date: resultJSON[0].record.date,
             location: resultJSON[0].record.location,
             vaccine_type: resultJSON[0].record.vaccinetype,
-            vaccine_session: parseInt(
-                resultJSON[0].record.vaccinenumber
-            ),
+            vaccine_session: parseInt(resultJSON[0].record.vaccinenumber),
             user_id: resultJSON[0].record.userid,
             vaccine_index: resultJSON[0].vaccineKey,
         });
@@ -51,6 +47,7 @@ router.get('/vaccine/:vaccineIndex', async (req, res, next) => {
 
 router.get('/', async (req, res, next) => {
     let user_id = 'test@naver.com';
+    // const { email } = res.locals.user;
 
     let args = [user_id];
     let result = await sdk.send(false, 'getCertificateByUserId', args);

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('follow', {
+  return sequelize.define('Follow', {
     idx_follow: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -22,10 +22,6 @@ module.exports = function(sequelize, DataTypes) {
         key: 'idx_user'
       }
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
     bookmark: {
       type: DataTypes.TINYINT,
       allowNull: false,
@@ -35,11 +31,20 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    updated_ad: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'follow',
-    timestamps: false,
+    timestamps: true,
+    underscored: true,
     indexes: [
       {
         name: "PRIMARY",
