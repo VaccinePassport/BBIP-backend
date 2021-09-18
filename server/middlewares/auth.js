@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtKey } = require('../config/config');
-const { user } = require('../models');
+const { User } = require('../models');
 
 module.exports = (req, res, next) => {
     const { authorization } = req.headers;
@@ -24,7 +24,7 @@ module.exports = (req, res, next) => {
     try {
         const { userIdx } = jwt.verify(tokenValue, jwtKey);
 
-        user.findByPk(userIdx).then((user) => {
+        User.findByPk(userIdx).then((user) => {
             if (!user) {
                 res.status(401).send({
                     message: '회원가입 후 사용하세요.',
