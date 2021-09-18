@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 var sdk = require('../sdk');
-const { user } = require('../models');
 
 router.post('/', async (req, res, next) => {
     let { date, location, vaccine_type, vaccine_session } = req.body;

@@ -5,7 +5,7 @@ const { User } = require('../models');
 module.exports = (req, res, next) => {
     const { authorization } = req.headers;
 
-    if(authorization==undefined){
+    if (authorization == undefined) {
         res.status(401).send({
             message: '회원가입 후 사용하세요.',
         });
@@ -32,8 +32,8 @@ module.exports = (req, res, next) => {
                 return;
             }
 
-            if( req.route.path != "/auth"){
-                if(user.sign_up_verification==0){
+            if (req.route.path != '/auth') {
+                if (user.sign_up_verification == 0) {
                     res.status(403).send({
                         message: '이메일 인증 후 사용하세요.',
                     });
@@ -51,4 +51,3 @@ module.exports = (req, res, next) => {
         return;
     }
 };
-

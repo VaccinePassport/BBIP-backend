@@ -1,7 +1,5 @@
-function test () {
-    return "test";
-}
-
-module.exports = {
-    test,
+const userService = {
+    test: "test",
 };
+
+module.exports = userService;
