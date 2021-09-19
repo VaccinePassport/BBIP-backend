@@ -2,7 +2,7 @@
 
 const FabricCAServices = require('fabric-ca-client');
 const { FileSystemWallet, X509WalletMixin } = require('fabric-network');
-const { appAdmin, appAdminSecret, orgMSPID } = require('../config/config');
+const { appAdmin, appAdminSecret, orgMSPID, userName } = require('../config/config');
 
 const fs = require('fs');
 const path = require('path');

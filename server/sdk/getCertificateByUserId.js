@@ -2,6 +2,7 @@
 
 const { FileSystemWallet, Gateway } = require('fabric-network');
 const path = require('path');
+const { userName } = require('../config/config');
 
 const ccpPath = path.resolve(__dirname, '..', 'connection.json');
 
@@ -11,10 +12,10 @@ async function main() {
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
-        const userExists = await wallet.exists(appAdmin);
+        const userExists = await wallet.exists(userName);
         if (!userExists) {
             console.log(
-                'An identity for the user "admin" does not exist in the wallet'
+                `An identity for the user '${userName}' does not exist in the wallet`
             );
             console.log('Run the registerUser.js application before retrying');
             return;
@@ -23,7 +24,7 @@ async function main() {
         const gateway = new Gateway();
         await gateway.connect(ccpPath, {
             wallet,
-            identity: appAdmin,
+            identity: userName,
             discovery: { enabled: true, asLocalhost: true },
         });
 
