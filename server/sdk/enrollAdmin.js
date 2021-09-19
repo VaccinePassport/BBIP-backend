@@ -2,12 +2,17 @@
 
 const FabricCAServices = require('fabric-ca-client');
 const { FileSystemWallet, X509WalletMixin } = require('fabric-network');
-const { appAdmin, appAdminSecret, orgMSPID, userName } = require('../config/config');
+const {
+    appAdmin,
+    appAdminSecret,
+    orgMSPID,
+    userName,
+} = require('../config/config');
 
 const fs = require('fs');
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, '..', 'connection.json');
+const ccpPath = path.resolve(__dirname, 'connection.json');
 const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
 const ccp = JSON.parse(ccpJSON);
 
@@ -25,7 +30,7 @@ async function main() {
 
         console.log('phase1');
 
-        const walletPath = path.join(process.cwd(), '..', 'wallet');
+        const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
