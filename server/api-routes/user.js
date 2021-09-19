@@ -3,12 +3,8 @@ const jwt = require('jsonwebtoken');
 const { jwtKey } = require('../config/config');
 const { authMiddleware } = require('../middlewares');
 const { User } = require('../models');
-const {
-    userService,
-    mailSender,
-    userSchema,
-    makeRandomCode,
-} = require('../services');
+const { userService } = require('../services');
+const { mailSender, userSchema, makeRandomCode } = require('../util');
 
 const router = express.Router();
 
