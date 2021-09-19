@@ -14,7 +14,7 @@ const {
 
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, 'connection.json');
+const ccpPath = path.resolve(__dirname, '..', 'connection.json');
 
 async function main() {
     try {
