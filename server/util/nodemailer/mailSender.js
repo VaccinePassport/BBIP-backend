@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const { emailId, emailPwd } = require('../config/config');
+const { emailId, emailPwd } = require('../../config/config');
 
 const mailSubject = function (code) {
     return `BBIP 인증번호 : ${code}`;
