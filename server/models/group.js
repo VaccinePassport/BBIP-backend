@@ -1,27 +1,22 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Follow', {
-    idx_follow: {
+  return sequelize.define('Group', {
+    idx_group: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    following_id: {
+    group_no: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    followed_id: {
+    idx_follow: {
       type: DataTypes.INTEGER,
       allowNull: false
-    },
-    bookmark: {
-      type: DataTypes.TINYINT,
-      allowNull: false,
-      defaultValue: 0
     },
     accept: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0
     },
@@ -35,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'follow',
+    tableName: 'group',
     timestamps: true,
     underscored: true,
     indexes: [
@@ -44,7 +39,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "idx_follow" },
+          { name: "idx_group" },
         ]
       },
     ]
