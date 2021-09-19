@@ -2,6 +2,7 @@
 
 const FabricCAServices = require('fabric-ca-client');
 const { FileSystemWallet, X509WalletMixin } = require('fabric-network');
+const { appAdmin, appAdminSecret, orgMSPID } = require('../config/config');
 
 const fs = require('fs');
 const path = require('path');
@@ -28,7 +29,7 @@ async function main() {
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
-        const adminExists = await wallet.exists('admin');
+        const adminExists = await wallet.exists(appAdmin);
         if (adminExists) {
             console.log(
                 'An identity for the admin user "admin" already exists in the wallet'
@@ -37,15 +38,15 @@ async function main() {
         }
 
         const enrollment = await ca.enroll({
-            enrollmentID: 'admin',
-            enrollmentSecret: 'adminpw',
+            enrollmentID: appAdmin,
+            enrollmentSecret: appAdminSecret,
         });
         const identity = X509WalletMixin.createIdentity(
-            'User1Org',
+            orgMSPID,
             enrollment.certificate,
             enrollment.key.toBytes()
         );
-        await wallet.import('admin', identity);
+        await wallet.import(appAdmin, identity);
         console.log(
             'Successfully enrolled admin user "admin" and imported it into the wallet'
         );

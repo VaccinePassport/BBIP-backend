@@ -11,7 +11,7 @@ async function main() {
         const wallet = new FileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
-        const userExists = await wallet.exists('admin');
+        const userExists = await wallet.exists(appAdmin);
         if (!userExists) {
             console.log(
                 'An identity for the user "admin" does not exist in the wallet'
@@ -23,7 +23,7 @@ async function main() {
         const gateway = new Gateway();
         await gateway.connect(ccpPath, {
             wallet,
-            identity: 'admin',
+            identity: appAdmin,
             discovery: { enabled: true, asLocalhost: true },
         });
 
