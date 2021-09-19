@@ -1,14 +1,14 @@
 const Joi = require('joi');
 
 const userSchema = {
-    postJoinSchema: Joi.object({
+    postJoin: Joi.object({
         user_id: Joi.string().email().required(),
-        phone: Joi.string().required(),
+        phone: Joi.string().regex(/^[0-9]{3}-[0-9]{3,4}-[0-9]{4}$/).required(),
         name: Joi.string().required(),
         birth: Joi.string().required(),
         gender: Joi.string().required(),
     }),
-    patchAuthSchema: Joi.object({
+    patchAuth: Joi.object({
         code: Joi.string().length(6).required(),
     }),
 };

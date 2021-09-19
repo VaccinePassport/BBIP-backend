@@ -1,9 +1,10 @@
 const express = require('express');
 const { authMiddleware } = require('../middlewares');
-const { userService } = require('../services');
+const userService = require('../services/user');
+
 const router = express.Router();
 
-router.post('/join', userService.join(req,res,next));
-router.patch('/auth', authMiddleware, userService.auth(req,res,next));
+router.post('/join', userService.join);
+router.patch('/auth', authMiddleware, userService.auth);
 
 module.exports = router;

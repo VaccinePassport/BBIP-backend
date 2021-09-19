@@ -1,4 +1,3 @@
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const { jwtKey } = require('../config/config');
 const { User } = require('../models');
@@ -8,7 +7,7 @@ const userService = {
     join: async (req, res, next) => {
         try {
             let { user_id, phone, name, birth, gender } =
-                await userSchema.postJoinSchema.validateAsync(req.body);
+                await userSchema.postJoin.validateAsync(req.body);
 
             const existUsers = await User.findAll({
                 where: {
@@ -50,7 +49,7 @@ const userService = {
 
     auth: async (req, res, next) => {
         try {
-            let { code } = await userSchema.patchAuthSchema.validateAsync(
+            let { code } = await userSchema.patchAuth.validateAsync(
                 req.body
             );
             const { idx_user, verification_number } = res.locals.user;
