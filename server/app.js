@@ -4,7 +4,7 @@ var path = require('path');
 const jwt = require('jsonwebtoken');
 
 const { authMiddleware, versionMiddleware } = require('./middlewares');
-const { userRouter, vaccincationRouter } = require('./api-routes');
+const { userRouter, vaccincationRouter, qrRouter } = require('./api-routes');
 // qrRouter, friendsRouter, vaccinationAgencyRouter
 
 const app = express();
@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 app.use(express.json());
 app.use('/api/:version/user', versionMiddleware, userRouter);
 app.use('/api/:version/vaccincation', versionMiddleware, authMiddleware, vaccincationRouter);
-//app.use('/api/:version/qr', versionMiddleware, qrRouter);
+app.use('/api/:version/qr', versionMiddleware, qrRouter);
 //app.use('/api/:version/friends', versionMiddleware, friendsRouter);
 //app.use('/api/:version/vaccinationAgency', versionMiddleware, vaccinationAgencyRouter);
 
