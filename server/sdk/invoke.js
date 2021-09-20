@@ -30,16 +30,16 @@ async function send(isQuery, func, args) {
         const network = await gateway.getNetwork('channeluser1');
         const contract = network.getContract('bbip-cc');
 
-        if (!isQuery) {
-            const result = await contract.submitTransaction(func, ...args);
-            console.log('Transaction has been submitted');
-            await gateway.disconnect();
-            return result;
-        } else {
+        if (isQuery) {
             const result = await contract.evaluateTransaction(func, ...args);
             console.log(
                 `Transaction has been evaluated, result is: ${result.toString()}`
             );
+            return result;
+        } else {
+            const result = await contract.submitTransaction(func, ...args);
+            console.log('Transaction has been submitted');
+            await gateway.disconnect();
             return result;
         }
     } catch (error) {
