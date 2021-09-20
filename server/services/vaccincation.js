@@ -7,10 +7,10 @@ const vaccincationService = {
             let { date, location, vaccine_type, vaccine_session } =
                 await vaccincationSchema.postVaccine.validateAsync(req.body);
 
-            const { user_id } = res.locals.user;
+            const { email } = res.locals.user;
 
             let args = [
-                user_id,
+                email,
                 date,
                 vaccine_type,
                 String(vaccine_session),
@@ -19,7 +19,6 @@ const vaccincationService = {
 
             let result = await invoke.send(true, 'putCertificate', args);
             let resultJSON = JSON.parse(result);
-            console.log("\n",resultJSON);
            
             if (resultJSON.message == 'success') {
                 res.status(201).send({});
@@ -76,17 +75,14 @@ const vaccincationService = {
             let result = await invoke.send(false, 'getCertificateByCertKey', args);
             let resultJSON = JSON.parse(result);
 
-            
-            if(email != resultJSON[0].record.userid){
-                res.status(400).send({
-                    message: "잘못된 요청입니다."
-                })
-            }
-            
-
             if (resultJSON[0].record == '') {
                 res.send({});
-            } else {
+            } else if(email != resultJSON[0].record.userid){
+                res.status(400).send({
+                    message: "접근할 수 없는 백신 이력입니다."
+                })
+            } 
+            else {
                 res.send({
                     date: resultJSON[0].record.date,
                     location: resultJSON[0].record.location,
