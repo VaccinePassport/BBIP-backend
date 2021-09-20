@@ -78,6 +78,40 @@ func generateKey(APIstub shim.ChaincodeStubInterface, key string) []byte {
    return newCertificateKeyJSON
 }
 
+// 중복 검사(id와 session으로)
+func hasSameCertificate(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) bool {
+
+   certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
+
+   certificateKey := CertificateKey{}
+   json.Unmarshal(certificateKeyJSON, &certificateKey)
+
+   var startKey = "VC1"
+   var endKey = certificateKey.Key + strconv.Itoa(certificateKey.Idx + 1)
+   fmt.Println("search range: ("+startKey+")~("+endKey+"-1)")
+
+   resultsIter, err := APIstub.GetStateByRange(startKey, endKey)
+   if err != nil {
+      return false;
+   }
+   defer resultsIter.Close()
+
+   for resultsIter.HasNext() {
+      queryResponse, err := resultsIter.Next()
+      if err != nil {
+         return false;
+      }
+      var tempCertificate VaccinationCertificate
+      json.Unmarshal(queryResponse.Value, &tempCertificate)
+
+      if (tempCertificate.UserId == userId && tempCertificate.VaccineNumber == vaccineNumber){ 
+         return true
+      }
+   }
+
+   return false
+}
+
 // 특정인의 백신 이력 등록
 func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
@@ -250,40 +284,6 @@ func (s *SmartContract) getAllCertificate(APIstub shim.ChaincodeStubInterface) p
    }
    buffer.WriteString("]")
    return shim.Success(buffer.Bytes())
-}
-
-// 중복 검사(id와 session으로)
-func hasSameCertificate(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) bool {
-
-   certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
-
-   certificateKey := CertificateKey{}
-   json.Unmarshal(certificateKeyJSON, &certificateKey)
-
-   var startKey = "VC1"
-   var endKey = certificateKey.Key + strconv.Itoa(certificateKey.Idx + 1)
-   fmt.Println("search range: ("+startKey+")~("+endKey+"-1)")
-
-   resultsIter, err := APIstub.GetStateByRange(startKey, endKey)
-   if err != nil {
-      return shim.Error(err.Error())
-   }
-   defer resultsIter.Close()
-
-   for resultsIter.HasNext() {
-      queryResponse, err := resultsIter.Next()
-      if err != nil {
-         return shim.Error(err.Error())
-      }
-      var tempCertificate VaccinationCertificate
-      json.Unmarshal(queryResponse.Value, &tempCertificate)
-
-      if (tempCertificate.UserId == userId && tempCertificate.VaccineNumber == vaccineNumber){ 
-         return true
-      }
-   }
-
-   return false
 }
 
 // 특정 백신 이력들 조회
