@@ -5,7 +5,7 @@ var path = require('path');
 
 const ccpPath = path.resolve(__dirname, 'connection.json');
 
-async function send(type, func, args) {
+async function send(isQuery, func, args) {
     try {
         const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = new FileSystemWallet(walletPath);
@@ -30,7 +30,7 @@ async function send(type, func, args) {
         const network = await gateway.getNetwork('channeluser1');
         const contract = network.getContract('bbip-cc');
 
-        if (type) {
+        if (!isQuery) {
             const result = await contract.submitTransaction(func, ...args);
             console.log('Transaction has been submitted');
             await gateway.disconnect();

@@ -1,4 +1,4 @@
-var sdk = require('../sdk');
+var invoke = require('../sdk/invoke');
 const { vaccincationSchema } = require('../util');
 
 const vaccincationService = {
@@ -7,8 +7,7 @@ const vaccincationService = {
             let { date, location, vaccine_type, vaccine_session } =
                 await vaccincationSchema.postVaccine.validateAsync(req.body);
 
-            let user_id = 'test@naver.com';
-            // const { user_id } = res.locals.user;
+            const { user_id } = res.locals.user;
 
             let args = [
                 user_id,
@@ -18,7 +17,7 @@ const vaccincationService = {
                 location,
             ];
 
-            let result = await sdk.send(true, 'putCertificate', args);
+            let result = await invoke.send(true, 'putCertificate', args);
             let resultJSON = JSON.parse(result);
             console.log("\n",resultJSON);
            
@@ -37,17 +36,16 @@ const vaccincationService = {
         } catch (error) {
             console.log(error);
             res.status(400).send({
-                message: '잘못된 요청입니다.',
+                message: '요청한 데이터의 형식이 올바르지 않습니다.',
             });
         }
     },
 
     getVaccineByEmail: async (req, res, next) => {
-        let user_id = 'test@naver.com';
-        // const { email } = res.locals.user;
+        const { email } = res.locals.user;
 
-        let args = [user_id];
-        let result = await sdk.send(false, 'getCertificateByUserId', args);
+        let args = [email];
+        let result = await invoke.send(false, 'getCertificateByUserId', args);
         let resultJSON = JSON.parse(result);
 
         let vaccineList = [];
@@ -71,20 +69,20 @@ const vaccincationService = {
                     req.params
                 );
 
-            // const { email } = res.locals.user;
+            const { email } = res.locals.user;
 
             let args = [String(vaccineIndex)];
 
-            let result = await sdk.send(false, 'getCertificateByCertKey', args);
+            let result = await invoke.send(false, 'getCertificateByCertKey', args);
             let resultJSON = JSON.parse(result);
 
-            /*
+            
             if(email != resultJSON[0].record.userid){
                 res.status(400).send({
                     message: "잘못된 요청입니다."
                 })
             }
-            */
+            
 
             if (resultJSON[0].record == '') {
                 res.send({});
@@ -103,7 +101,7 @@ const vaccincationService = {
         } catch (error) {
             console.log(error);
             res.status(400).send({
-                message: '잘못된 요청입니다.',
+                message: '요청한 데이터의 형식이 올바르지 않습니다.',
             });
         }
     },

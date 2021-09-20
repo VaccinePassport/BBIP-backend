@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.use(express.json());
 app.use('/api/:version/user', versionMiddleware, userRouter);
-app.use('/api/:version/vaccincation', versionMiddleware, vaccincationRouter);
+app.use('/api/:version/vaccincation', versionMiddleware, authMiddleware, vaccincationRouter);
 //app.use('/api/:version/qr', versionMiddleware, qrRouter);
 //app.use('/api/:version/friends', versionMiddleware, friendsRouter);
 //app.use('/api/:version/vaccinationAgency', versionMiddleware, vaccinationAgencyRouter);
