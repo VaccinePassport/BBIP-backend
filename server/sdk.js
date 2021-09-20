@@ -31,10 +31,10 @@ async function send(type, func, args) {
         const contract = network.getContract('bbip-cc');
 
         if (type) {
-            await contract.submitTransaction(func, ...args);
+            const result = await contract.submitTransaction(func, ...args);
             console.log('Transaction has been submitted');
             await gateway.disconnect();
-            return 'success';
+            return result;
         } else {
             const result = await contract.evaluateTransaction(func, ...args);
             console.log(

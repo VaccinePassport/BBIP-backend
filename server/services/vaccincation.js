@@ -18,7 +18,7 @@ const vaccincationService = {
                 location,
             ];
 
-            let result = await sdk.send(false, 'putCertificate', args);
+            let result = await sdk.send(true, 'putCertificate', args);
             let resultJSON = JSON.parse(result);
             console.log("\n",resultJSON);
            
