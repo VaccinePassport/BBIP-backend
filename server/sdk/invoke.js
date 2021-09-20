@@ -7,7 +7,7 @@ const ccpPath = path.resolve(__dirname, '..', 'connection.json');
 
 async function send(isQuery, func, args) {
     try {
-        const walletPath = path.join(process.cwd(), '..', 'wallet');
+        const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = new FileSystemWallet(walletPath);
         console.log('run sdk.js');
         console.log(`Wallet path: ${walletPath}`);
