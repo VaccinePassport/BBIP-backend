@@ -120,7 +120,7 @@ func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args
    }
 
    if (hasSameCertificate(APIstub, args[0], args[3]) == true){
-      return shim.Error("already exists.")
+      return shim.Success([]byte("{\"message\":\"already exists.\"}"))
    }
 
    var certificateKey = CertificateKey{} // 새로 저장할 키
@@ -145,7 +145,7 @@ func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args
       return shim.Error(fmt.Sprintf("Failed to record latestKey catch: %s", certificateKey))
    }
 
-   return shim.Success(nil)
+   return shim.Success([]byte("{\"message\":\"success.\"}"))
 }
 
 // 특정 백신 이력 조회
