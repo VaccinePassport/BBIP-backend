@@ -20,11 +20,11 @@ const vaccincationService = {
 
             let result = await sdk.send(true, 'putCertificate', args);
             console.log();
-            console.log(a.endorsements[0].Error)
+            console.log(result.endorsements[0].Error)
             console.log();
-            console.log(a.endorsements[0].status)
+            console.log(result.endorsements[0].status)
             console.log();
-            console.log(a.endorsements[0].payload)
+            console.log(result.endorsements[0].payload)
             if (result == 'success') {
                 res.status(201).send({});
             } else {
