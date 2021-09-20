@@ -26,7 +26,7 @@ const vaccincationService = {
             console.log();
             console.log(result.endorsements[0].status)
             console.log();
-            console.log(result.endorsements[0].payload.toString())
+            console.log(String(result.endorsements[0].payload))
             if (result == 'success') {
                 res.status(201).send({});
             } else {
