@@ -85,7 +85,7 @@ func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args
       return shim.Error("Incorrect number of arguments. Expecting 5")
    }
 
-   if (getCertificateByIdAndSession(args[0], args[3]) != nil){
+   if (getCertificateByIdAndSession(APIstub, args[0], args[3]) != nil){
       return shim.Error("already exists.")
    }
 
