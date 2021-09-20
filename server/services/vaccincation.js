@@ -18,11 +18,18 @@ const vaccincationService = {
                 location,
             ];
 
-            let result = await sdk.send(true, 'putCertificate', args);
+            let result = await sdk.send(false, 'putCertificate', args);
+            let resultJSON = JSON.parse(result);
+            console.log("\n",resultJSON);
            
-            if (result == 'success') {
+            if (resultJSON.message == 'success') {
                 res.status(201).send({});
-            } else {
+            } else if (resultJSON.message == 'already exists'){
+                res.status(400).send({
+                    message: '동일한 차수의 백신 내역이 존재합니다.',
+                });
+            }
+            else{
                 res.status(400).send({
                     message: '알 수 없는 오류가 발생했습니다.',
                 });
