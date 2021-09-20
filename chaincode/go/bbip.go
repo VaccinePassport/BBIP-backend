@@ -85,6 +85,10 @@ func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args
       return shim.Error("Incorrect number of arguments. Expecting 5")
    }
 
+   if (getCertificateByIdAndSession(args[0], args[3]) != nil){
+      return shim.Error("already exists.")
+   }
+
    var certificateKey = CertificateKey{} // 새로 저장할 키
    json.Unmarshal(generateKey(APIstub, latestKey), &certificateKey)
 
@@ -246,6 +250,40 @@ func (s *SmartContract) getAllCertificate(APIstub shim.ChaincodeStubInterface) p
    }
    buffer.WriteString("]")
    return shim.Success(buffer.Bytes())
+}
+
+// 중복 검사(id와 session으로)
+func getCertificateByIdAndSession(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) []byte {
+
+   certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
+
+   certificateKey := CertificateKey{}
+   json.Unmarshal(certificateKeyJSON, &certificateKey)
+
+   var startKey = "VC1"
+   var endKey = certificateKey.Key + strconv.Itoa(certificateKey.Idx + 1)
+   fmt.Println("search range: ("+startKey+")~("+endKey+"-1)")
+
+   resultsIter, err := APIstub.GetStateByRange(startKey, endKey)
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+   defer resultsIter.Close()
+
+   for resultsIter.HasNext() {
+      queryResponse, err := resultsIter.Next()
+      if err != nil {
+         return shim.Error(err.Error())
+      }
+      var tempCertificate VaccinationCertificate
+      json.Unmarshal(queryResponse.Value, &tempCertificate)
+
+      if (tempCertificate.UserId == userId && tempCertificate.VaccineNumber == vaccineNumber){ 
+         return queryResponse
+      }
+   }
+
+   return nil
 }
 
 // 특정 백신 이력들 조회
