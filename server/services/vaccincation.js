@@ -19,10 +19,10 @@ const vaccincationService = {
             ];
 
             let result = await sdk.send(true, 'putCertificate', args);
-            let resultJSON = JSON.parse(result);
+            //let resultJSON = JSON.parse(result);
             let endorsementsJSON = JSON.parse(result.endorsements[0])
             console.log();
-            console.log(resultJSON)
+            //console.log(resultJSON)
             console.log();
             console.log(endorsementsJSON);
             console.log();
