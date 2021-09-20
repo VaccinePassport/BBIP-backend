@@ -10,8 +10,6 @@ const vaccincationService = {
             let user_id = 'test@naver.com';
             // const { user_id } = res.locals.user;
 
-            // 중복 체크 어떻게 할 것 인지?
-
             let args = [
                 user_id,
                 date,
@@ -21,6 +19,8 @@ const vaccincationService = {
             ];
 
             let result = await sdk.send(true, 'putCertificate', args);
+            console.log();
+            console.log("Here!");
             console.log(result);
             if (result == 'success') {
                 res.status(201).send({});
