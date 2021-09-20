@@ -85,7 +85,7 @@ func (s *SmartContract) putCertificate(APIstub shim.ChaincodeStubInterface, args
       return shim.Error("Incorrect number of arguments. Expecting 5")
    }
 
-   if (getCertificateByIdAndSession(APIstub, args[0], args[3]) != nil){
+   if (hasSameCertificate(APIstub, args[0], args[3]) == true){
       return shim.Error("already exists.")
    }
 
@@ -253,7 +253,7 @@ func (s *SmartContract) getAllCertificate(APIstub shim.ChaincodeStubInterface) p
 }
 
 // 중복 검사(id와 session으로)
-func getCertificateByIdAndSession(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) *queryresult.KV {
+func hasSameCertificate(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) bool {
 
    certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
 
@@ -279,11 +279,11 @@ func getCertificateByIdAndSession(APIstub shim.ChaincodeStubInterface, userId st
       json.Unmarshal(queryResponse.Value, &tempCertificate)
 
       if (tempCertificate.UserId == userId && tempCertificate.VaccineNumber == vaccineNumber){ 
-         return queryResponse
+         return true
       }
    }
 
-   return nil
+   return false
 }
 
 // 특정 백신 이력들 조회
