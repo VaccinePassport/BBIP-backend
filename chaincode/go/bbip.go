@@ -253,7 +253,7 @@ func (s *SmartContract) getAllCertificate(APIstub shim.ChaincodeStubInterface) p
 }
 
 // 중복 검사(id와 session으로)
-func getCertificateByIdAndSession(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) []byte {
+func getCertificateByIdAndSession(APIstub shim.ChaincodeStubInterface, userId string, vaccineNumber string) *queryresult.KV {
 
    certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
 
