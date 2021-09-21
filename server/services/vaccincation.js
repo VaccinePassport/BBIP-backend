@@ -1,4 +1,4 @@
-var invoke = require('../sdk/invoke');
+var sdk = require('../sdk/sdk');
 const { vaccincationSchema } = require('../util');
 
 const vaccincationService = {

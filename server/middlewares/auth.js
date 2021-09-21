@@ -35,13 +35,13 @@ module.exports = (req, res, next) => {
             let isAuth = false;
             try {
                 isAuth = req.route.path == '/auth';
-            } catch (error) {
-                if (!isAuth && user.sign_up_verification == 0) {
-                    res.status(403).send({
-                        message: '이메일 인증 후 사용하세요.',
-                    });
-                    return;
-                }
+            } catch (error) {}
+            
+            if (!isAuth && user.sign_up_verification == 0) {
+                res.status(403).send({
+                    message: '이메일 인증 후 사용하세요.',
+                });
+                return;
             }
             res.locals.user = user;
             next();
