@@ -17,7 +17,7 @@ const vaccincationService = {
                 location,
             ];
 
-            let result = await invoke.send(false, 'putCertificate', args);
+            let result = await sdk.send(false, 'putCertificate', args);
             let resultJSON = JSON.parse(result);
            
             if (resultJSON.message == 'success') {
@@ -44,7 +44,7 @@ const vaccincationService = {
         const { email } = res.locals.user;
 
         let args = [email];
-        let result = await invoke.send(true, 'getCertificateByUserId', args);
+        let result = await sdk.send(true, 'getCertificateByUserId', args);
         let resultJSON = JSON.parse(result);
 
         let vaccineList = [];
@@ -72,7 +72,7 @@ const vaccincationService = {
 
             let args = [String(vaccineIndex)];
 
-            let result = await invoke.send(true, 'getCertificateByCertKey', args);
+            let result = await sdk.send(true, 'getCertificateByCertKey', args);
             let resultJSON = JSON.parse(result);
 
             if (resultJSON[0].record == '') {
