@@ -46,13 +46,13 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.User.hasMany(db.Follow, {as: "following", foreignKey:"following_id"});
-db.Follow.belongsTo(db.User, {as: "user_of_following_id", foreignKey: "following_id"});
+db.User.hasMany(db.Follow, {as: "Following", foreignKey:"following_id"});
+db.Follow.belongsTo(db.User, {as: "User_following_id", foreignKey: "following_id"});
 
-db.User.hasMany(db.Follow, {as: "followed", foreignKey:"followed_id"});
-db.Follow.belongsTo(db.User, {as: "user_of_followed_id", foreignKey: "followed_id"});
+db.User.hasMany(db.Follow, {as: "Followed", foreignKey:"followed_id"});
+db.Follow.belongsTo(db.User, {as: "User_followed_id", foreignKey: "followed_id"});
 
-db.Follow.hasMany(db.Group, {as: "groups", foreignKey: "idx_follow"});
-db.Group.belongsTo(db.Follow, {as: "follow_follow_idx_follow", foreignKey: "idx_follow"});
+db.Follow.hasMany(db.Group, {as: "Groups", foreignKey: "idx_follow"});
+db.Group.belongsTo(db.Follow, {as: "Follow_idx_follow", foreignKey: "idx_follow"});
 
 module.exports = db;

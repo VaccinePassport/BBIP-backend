@@ -18,22 +18,12 @@ const qrService = {
 
         // 친구 정보 확인
         try {
-            // some이면 프렌드만, every면 프렌드 아닌 사람만
-            const friends_list = await qrService.findFriends(user.idx_user);
-            const friends_list2 = await qrService.findRealFriendsInFriendList(
+            const real_friends_list = await qrService.findRealFriendsInFriendList(
                 user.idx_user,
                 user_id_list
             );
-            res.send(friends_list2);
-            return;
-
-            let notFriends = user_id_list.filter((user_id) =>
-                friends_list.every(
-                    (value) => user_id != value.get('followed_email')
-                )
-            );
-            if (notFriends.length != 0) {
-                res.status(400).json({ message: '잘못된 친구 정보입니다.' });
+            if (real_friends_list.length != user_id_list.length) {
+                res.status(400).json({ message: '동행자가 아닌 사용자가 포함되어 있습니다.' });
                 return;
             }
         } catch (error) {
@@ -47,7 +37,7 @@ const qrService = {
         // 친구들에게 개인 정보 push 알림 전송
 
         // group table (누가 누구에게 그룹 qr 요청을 했는지)
-        friends_list[i].get('followed_email');
+        //real_friends_list
 
         // 친구들의 개인 정보 동의 여부 확인
 
@@ -94,15 +84,12 @@ const qrService = {
     findRealFriendsInFriendList: async (idx_user, friend_list) => {
         try {
             /* (friend_list) 중에 idx_user와 친구인 [follow row & follow_idx에 해당하는 email] 찾기
-            SELECT follow_include_following_email.*, follow_include_followed_email.followed_email
-            FROM (SELECT follow.*, email as following_email
-                    FROM bbip.follow INNER JOIN user on following_id=idx_user) as follow_include_following_email
-            INNER JOIN (SELECT follow.*, email as followed_email
-                    FROM bbip.follow INNER JOIN user on followed_id=idx_user) as follow_include_followed_email
-            ON (follow_include_following_email.idx_follow = follow_include_followed_email.idx_follow)
-            WHERE follow_include_following_email.following_id = idx_user 
-                AND follow_include_following_email.accept = 1 
-                AND followed_email in ("friend_email1@naver.com", "friend_email2@naver.com");
+            SELECT Follow.idx_follow, Follow.following_id, Follow.followed_id, Follow.bookmark, Follow.accept, 
+                user.email AS followed_email
+            FROM follow AS Follow
+            LEFT OUTER JOIN user AS user
+                ON Follow.followed_id = user.idx_user
+            WHERE Follow.following_id = 13 AND Follow.accept = 1 AND user.email IN ('','');
             */
             const friends = await Follow.findAll({
                 where: {
@@ -112,16 +99,13 @@ const qrService = {
                 include: [
                     {
                         model: User,
-                        as : 'user_of_followed_id',
-                        required: false,
-                        attributes: ['idx_user', 'email']
+                        as : 'User_followed_id',
+                        required: true, //INNER JOIN
+                        attributes: ['email'],
+                        where: {
+                            email: friend_list
+                        }
                     },
-                    {
-                        model: User,
-                        as : 'user_of_following_id',
-                        required: false,
-                        attributes: ['idx_user', 'email']
-                    }
                 ],
             });
             return friends;
