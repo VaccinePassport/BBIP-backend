@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Group', {
     idx_group: {
@@ -13,7 +14,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     idx_follow: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'Follow',
+        key: 'idx_follow'
+      }
     },
     accept: {
       type: DataTypes.TINYINT,
