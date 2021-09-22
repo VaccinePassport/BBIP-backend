@@ -9,11 +9,19 @@ module.exports = function(sequelize, DataTypes) {
     },
     following_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'User',
+        key: 'idx_user'
+      }
     },
     followed_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'User',
+        key: 'idx_user'
+      }
     },
     bookmark: {
       type: DataTypes.TINYINT,
@@ -49,4 +57,5 @@ module.exports = function(sequelize, DataTypes) {
       },
     ]
   });
+  
 };

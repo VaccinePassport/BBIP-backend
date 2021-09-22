@@ -3,6 +3,6 @@ const qrService = require('../services/qr');
 
 const router = express.Router();
 
-router.get('/group', qrService.group);
+router.get('/group', qrService.generateQroupQR);
 
 module.exports = router;
