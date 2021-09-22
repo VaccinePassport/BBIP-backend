@@ -42,7 +42,6 @@ Object.keys(db).forEach((modelName) => {
         db[modelName].associate(db);
     }
 });
-//initModels(sequelize);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
@@ -52,7 +51,6 @@ db.Follow.belongsTo(db.User, {as: "user_of_following_id", foreignKey: "following
 
 db.User.hasMany(db.Follow, {as: "followed", foreignKey:"followed_id"});
 db.Follow.belongsTo(db.User, {as: "user_of_followed_id", foreignKey: "followed_id"});
-//follow.belongsTo(user);
 
 db.Follow.hasMany(db.Group, {as: "groups", foreignKey: "idx_follow"});
 db.Group.belongsTo(db.Follow, {as: "follow_follow_idx_follow", foreignKey: "idx_follow"});

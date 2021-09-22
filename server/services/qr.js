@@ -93,7 +93,6 @@ const qrService = {
     },
     findRealFriendsInFriendList: async (idx_user, friend_list) => {
         try {
-            console.log("**********");
             /* (friend_list) 중에 idx_user와 친구인 [follow row & follow_idx에 해당하는 email] 찾기
             SELECT follow_include_following_email.*, follow_include_followed_email.followed_email
             FROM (SELECT follow.*, email as following_email
@@ -113,16 +112,18 @@ const qrService = {
                 include: [
                     {
                         model: User,
-                        as : 'user_of_followed_id'
+                        as : 'user_of_followed_id',
+                        required: false,
+                        attributes: ['idx_user', 'email']
                     },
                     {
                         model: User,
-                        as : 'user_of_following_id'
+                        as : 'user_of_following_id',
+                        required: false,
+                        attributes: ['idx_user', 'email']
                     }
                 ],
             });
-            console.log("*************");
-            console.log("*", friends);
             return friends;
         } catch (error) {
             console.log(error);
