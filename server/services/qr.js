@@ -8,7 +8,7 @@ const qrService = {
         let { user_id_list, qr_password } = req.body;
         const user = res.locals.user;
 
-        // QR 비번 확인
+        // check qr password
         if (user.qr_password) {
             if (qr_password != user.qr_password) {
                 res.status(400).json({ message: '비밀번호가 틀렸습니다.' });
@@ -16,16 +16,67 @@ const qrService = {
             }
         }
 
-        // 친구 정보 확인
         try {
-            const real_friends_list = await qrService.findRealFriendsInFriendList(
+            // check if user_id_list is a valid friend list
+            let realFriendsList = await qrService.findRealFriendsInFriendList(
                 user.idx_user,
                 user_id_list
             );
-            if (real_friends_list.length != user_id_list.length) {
-                res.status(400).json({ message: '동행자가 아닌 사용자가 포함되어 있습니다.' });
+            if (realFriendsList.length != user_id_list.length) {
+                res.status(400).json({
+                    message: '동행자가 아닌 사용자가 포함되어 있습니다.',
+                });
                 return;
             }
+
+            // insert Group
+            const beforeGroupNo = await Group.findAll({
+                attributes: [
+                    [
+                        sequelize.fn(
+                            'IFNULL',
+                            sequelize.fn('MAX', sequelize.col('group_no')),
+                            0
+                        ),
+                        'before_group_no',
+                    ],
+                ],
+            });
+            const groupNo = beforeGroupNo[0].get('before_group_no') + 1;
+
+            let insertValue = [];
+            let pushValue = [];
+            for (friend of realFriendsList) {
+                insertValue.push({
+                    group_no: groupNo,
+                    idx_follow: friend.idx_follow,
+                });
+                pushValue.push({
+                    idx_follow: friend.idx_follow,
+                    device_token: friend.User_followed_id.device_token,
+                });
+            }
+
+            if (pushValue.length != user_id_list.length) {
+                res.status(400).json({
+                    message: 'push 알림에 동의하지 않은 동행자가 있습니다.',
+                });
+                return;
+            }
+
+            await Group.bulkCreate(insertValue);
+
+            // send push
+            // pushValue[i].device_token에게 user.email, groupNo을 전송
+
+            // check if friends agree to their personal information
+            qrService.checkPersonalInformation(insertValue);
+
+            // create qr (me+friends)
+
+            res.json({
+                qr_vaccine: pushValue,
+            });
         } catch (error) {
             console.log(error);
             res.status(400).json({
@@ -33,19 +84,6 @@ const qrService = {
             });
             return;
         }
-
-        // 친구들에게 개인 정보 push 알림 전송
-
-        // group table (누가 누구에게 그룹 qr 요청을 했는지)
-        //real_friends_list
-
-        // 친구들의 개인 정보 동의 여부 확인
-
-        // qr 내용 생성 (내 정보+친구들 정보 생성)
-
-        res.json({
-            qr_vaccine: 'test',
-        });
     },
     findFriends: async (idx_user) => {
         try {
@@ -55,11 +93,6 @@ const qrService = {
             FROM bbip.follow
             WHERE following_id = idx_user AND accept = 1;
             */
-            /*
-           attributes: {
-                    include: []
-                },
-           */
             const friends = await Follow.findAll({
                 attributes: {
                     include: [
@@ -99,12 +132,12 @@ const qrService = {
                 include: [
                     {
                         model: User,
-                        as : 'User_followed_id',
-                        required: true, //INNER JOIN
-                        attributes: ['email'],
+                        as: 'User_followed_id',
+                        required: true,
+                        attributes: ['email', 'device_token'],
                         where: {
-                            email: friend_list
-                        }
+                            email: friend_list,
+                        },
                     },
                 ],
             });
@@ -114,6 +147,10 @@ const qrService = {
             return [];
         }
     },
+    checkPersonalInformation: async (group_no_idx_follow_list) => {
+        // 1분 안에 모든 이들이 동의 true
+        // 1분 지나면(모든 이들이 동의하지 않으면) false
+    }
 };
 
 module.exports = qrService;
