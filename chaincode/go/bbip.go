@@ -386,7 +386,7 @@ func (s *SmartContract) deleteCertificateByUserId(APIstub shim.ChaincodeStubInte
          return shim.Error("Failed to delete state")
       }
    }
-   return shim.Success(nil)
+   return shim.Success([]byte("{\"message\":\"success\"}"))
 }
 
 func main() {
