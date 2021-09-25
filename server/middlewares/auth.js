@@ -3,30 +3,30 @@ const { jwtJoinKey, jwtEmailKey } = require('../config/config');
 const { User } = require('../models');
 
 module.exports = (req, res, next) => {
-    const { authorization } = req.headers;
-
-    if (authorization == undefined) {
-        res.status(401).send({
-            message: '회원가입 후 사용하세요.',
-        });
-        return;
-    }
-
-    const [tokenType, tokenValue] = authorization.split(' ');
-
-    if (tokenType !== 'Bearer') {
-        res.status(401).send({
-            message: '회원가입 후 사용하세요.',
-        });
-        return;
-    }
-
     try {
+        const { authorization } = req.headers;
+
+        if (authorization == undefined) {
+            res.status(401).send({
+                message: '회원가입 후 사용하세요.',
+            });
+            return;
+        }
+
+        const [tokenType, tokenValue] = authorization.split(' ');
+
+        if (tokenType !== 'Bearer') {
+            res.status(401).send({
+                message: '회원가입 후 사용하세요.',
+            });
+            return;
+        }
+        
         let jwtKey = jwtJoinKey;
         try {
-            if (req.route.path == '/join'){
+            if (req.route.path == '/join') {
                 jwtKey = jwtEmailKey;
-            };
+            }
         } catch (error) {}
 
         const { userIdx } = jwt.verify(tokenValue, jwtKey);
@@ -38,11 +38,12 @@ module.exports = (req, res, next) => {
                 });
                 return;
             }
- 
+
             res.locals.user = user;
             next();
         });
     } catch (error) {
+        console.log(error);
         res.status(401).send({
             message: '회원가입 후 사용하세요.',
         });
