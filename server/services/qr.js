@@ -64,13 +64,14 @@ const qrService = {
                 return;
             }
 
-            await Group.bulkCreate(insertValue);
+            //await Group.bulkCreate(insertValue);
 
             // send push
             // pushValue[i].device_token에게 user.email, groupNo을 전송
 
             // check if friends agree to their personal information
-            qrService.checkPersonalInformation(insertValue);
+            await qrService.checkPersonalInformation(insertValue);
+            console.log("gg");
 
             // create qr (me+friends)
 
@@ -148,8 +149,31 @@ const qrService = {
         }
     },
     checkPersonalInformation: async (group_no_idx_follow_list) => {
+        // 개인정보 동의 push 리퀘스트 올 때마다, 
         // 1분 안에 모든 이들이 동의 true
         // 1분 지나면(모든 이들이 동의하지 않으면) false
+
+        // 10초 간격으로 메시지를 보여줌
+        let temp = 0;
+        let setTimeoutFlag = true;
+        let timerId = setInterval(() => {
+            // db에서 get하는거
+            temp++;
+            console.log("setInterval");
+            if(temp>5){
+                console.log("finish");
+                setTimeoutFlag = false;
+                clearInterval(this);
+            }
+        }, 1000);
+
+        // 1분 후에 정지
+        if(setTimeoutFlag){
+            await setTimeout(() => { 
+                console.log("finish-set");
+                clearInterval(timerId); }, 6000);
+        }
+        return;
     }
 };
 

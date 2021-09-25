@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     verification_number: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: true
     },
     sign_up_verification: {
       type: DataTypes.TINYINT,
