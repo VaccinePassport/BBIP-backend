@@ -380,7 +380,8 @@ func (s *SmartContract) deleteCertificateByUserId(APIstub shim.ChaincodeStubInte
          continue
       }
 
-      error := APIstub.DelState(value)
+      //s.deleteVaccinationCertificate(APIstub, [queryResponse.Key])
+      error := APIstub.DelState(queryResponse.Key)
       if error != nil {
          return shim.Error("Failed to delete state")
       }
