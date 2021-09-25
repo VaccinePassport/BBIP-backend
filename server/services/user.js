@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { jwtKey, jwtEmailKey, jwtJoinKey } = require('../config/config');
+const { jwtEmailKey, jwtJoinKey } = require('../config/config');
 const { User } = require('../models');
 const { mailSender, userSchema, makeRandomCode } = require('../util');
 var sdk = require('../sdk/sdk');
@@ -110,10 +110,9 @@ const userService = {
             let args = [user_id];
 
             let result = await sdk.send(false, 'deleteCertificateByUserId', args);
-            let resultJSON = JSON.parse(result);
+            console.log(result);
+            //let resultJSON = JSON.parse(result);
            
-            console.log(resultJSON);
-
             const token = jwt.sign({ userIdx: user.idx_user }, jwtJoinKey);
 
             res.status(201).send({
