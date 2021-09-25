@@ -88,7 +88,7 @@ const userService = {
             let { user_id, phone, name, birth, gender } =
                 await userSchema.postJoin.validateAsync(req.body);
             const user = res.locals.user;
-            console.log("라우터",user.email);
+            console.log('라우터', user.email);
             if (user.email != user_id) {
                 res.status(400).send({
                     message: '인증된 이메일과 일치하지 않습니다.',
@@ -106,27 +106,28 @@ const userService = {
                 { where: { email: user_id } }
             );
 
-            // 블록체인 관련 작업 (블록체인에 저장된 정보 삭제)
+            // Delete existing information stored on the blockchain
             let args = [user_id];
-
-            let result = await sdk.send(false, 'deleteCertificateByUserId', args);
-            console.log(result);
-            //let resultJSON = JSON.parse(result);
-           
-            const token = jwt.sign({ userIdx: user.idx_user }, jwtJoinKey);
-
-            res.status(201).send({
-                token,
-            });
+            let result = await sdk.send(
+                false,
+                'deleteCertificateByUserId',
+                args
+            );
+            let resultJSON = JSON.parse(result);
+            if (resultJSON.message == 'success') {
+                const token = jwt.sign({ userIdx: user.idx_user }, jwtJoinKey);
+                res.status(201).send({
+                    token,
+                });
+            }
         } catch (error) {
             console.log(error);
             res.status(400).send({
-                message: '요청한 데이터의 형식이 올바르지 않습니다.',
+                message:
+                    '알 수 없는 오류가 발생하였습니다. 관리자에게 문의하세요.',
             });
         }
     },
-
-    
 };
 
 module.exports = userService;
