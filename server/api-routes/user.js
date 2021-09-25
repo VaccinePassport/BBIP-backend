@@ -4,8 +4,8 @@ const userService = require('../services/user');
 
 const router = express.Router();
 
-router.post('/join', userService.join);
-router.patch('/auth', authMiddleware, userService.auth);
-router.patch('/auth-confirm', authMiddleware, userService.authComfirm);
+router.post('/auth', userService.auth);
+router.post('/auth-confirm', userService.authComfirm);
+router.put('/join', authMiddleware, userService.join);
 
 module.exports = router;

@@ -4,8 +4,8 @@ const { emailId, emailPwd } = require('../../config/config');
 const mailSubject = function (code) {
     return `BBIP 인증번호 : ${code}`;
 };
-const mailText = function (name, code) {
-    return `안녕하세요, ${name}님! BBIP의 인증번호는 다음과 같습니다. \n\n ${code} \n\n 이 이메일을 요청하지 않았다면, 이메일을 무시하세요.`;
+const mailText = function (email, code) {
+    return `안녕하세요, ${email}님!\nBBIP의 인증번호는 다음과 같습니다. \n\n ${code} \n\n 이 이메일을 요청하지 않았다면, 이메일을 무시하세요.`;
 };
 
 const mailSender = {
@@ -26,7 +26,7 @@ const mailSender = {
             from: emailId,
             to: receiver.email,
             subject: mailSubject(receiver.code),
-            text: mailText(receiver.name, receiver.code),
+            text: mailText(receiver.email, receiver.code),
         };
 
         transporter.sendMail(mailOptions, function (error, info) {

@@ -47,6 +47,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) pb.Response 
       return s.getCertificatesByCertKeys(APIstub, args)
    } else if function == "deleteVaccinationCertificate"{ // 접종 내역 삭제
       return s.deleteVaccinationCertificate(APIstub, args)
+   } else if function == "deleteCertificateByUserId" { // 특정인의 백신 이력 삭제
+      return s.deleteCertificateByUserId(APIstub, args)
    }
    fmt.Println("Please check your function : " + function)
    return shim.Error("Unknown function")
@@ -343,6 +345,47 @@ func (s *SmartContract) deleteVaccinationCertificate(APIstub shim.ChaincodeStubI
    }
 
    return shim.Success(nil)
+}
+
+
+// 특정인의 백신 이력들 삭제
+func (s *SmartContract) deleteCertificateByUserId(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+   var userId = args[0]
+   certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
+
+   certificateKey := CertificateKey{}
+   json.Unmarshal(certificateKeyJSON, &certificateKey)
+
+   var startKey = "VC1"
+   var endKey = certificateKey.Key + strconv.Itoa(certificateKey.Idx + 1)
+   fmt.Println("search range: ("+startKey+")~("+endKey+"-1)")
+
+   resultsIter, err := APIstub.GetStateByRange(startKey, endKey)
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+   defer resultsIter.Close()
+
+   for resultsIter.HasNext() {
+      queryResponse, err := resultsIter.Next()
+      if err != nil {
+         return shim.Error(err.Error())
+      }
+
+      var tempCertificate VaccinationCertificate
+      json.Unmarshal(queryResponse.Value, &tempCertificate)
+
+      if (tempCertificate.UserId != userId){ // 사용자의 접종 이력이 아니면
+         continue
+      }
+
+      error := APIstub.DelState(value)
+      if error != nil {
+         return shim.Error("Failed to delete state")
+      }
+   }
+   return shim.Success()
 }
 
 func main() {
