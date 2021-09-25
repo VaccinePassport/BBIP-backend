@@ -21,10 +21,10 @@ const mailSender = {
                 pass: emailPwd,
             },
         });
-
+ 
         var mailOptions = {
             from: emailId,
-            to: receiver.user_id,
+            to: receiver.email,
             subject: mailSubject(receiver.code),
             text: mailText(receiver.name, receiver.code),
         };

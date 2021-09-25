@@ -22,18 +22,13 @@ const userService = {
                 return;
             }
 
-            const code = makeRandomCode(6);
-
             const user = await User.create({
                 email: user_id,
                 phone: phone,
                 name: name,
                 birth: birth,
                 gender: gender,
-                verification_number: code,
             });
-
-            mailSender.sendGmail({ user_id, name, code });
 
             const token = jwt.sign({ userIdx: user.idx_user }, jwtKey);
             res.status(201).send({
@@ -48,10 +43,33 @@ const userService = {
     },
 
     auth: async (req, res, next) => {
+        const { idx_user, email, name } = res.locals.user;
+
         try {
-            let { code } = await userSchema.patchAuth.validateAsync(
-                req.body
+            const code = makeRandomCode(6);
+
+            await User.update(
+                { verification_number: code },
+                {
+                    where: {
+                        idx_user: idx_user,
+                    },
+                }
             );
+
+            mailSender.sendGmail({ email, name, code });
+            res.status(201).send({});
+        } catch (error) {
+            console.log(error);
+            res.status(400).send({
+                message: '알 수 없는 에러가 발생했습니다..',
+            });
+        }
+    },
+
+    authComfirm: async (req, res, next) => {
+        try {
+            let { code } = await userSchema.patchAuth.validateAsync(req.body);
             const { idx_user, verification_number } = res.locals.user;
 
             try {
