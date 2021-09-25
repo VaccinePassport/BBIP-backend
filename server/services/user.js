@@ -1,89 +1,68 @@
 const jwt = require('jsonwebtoken');
-const { jwtKey } = require('../config/config');
+const { jwtKey, jwtEmailKey, jwtJoinKey } = require('../config/config');
 const { User } = require('../models');
 const { mailSender, userSchema, makeRandomCode } = require('../util');
+var sdk = require('../sdk/sdk');
 
 const userService = {
-    join: async (req, res, next) => {
-        try {
-            let { user_id, phone, name, birth, gender } =
-                await userSchema.postJoin.validateAsync(req.body);
-
-            const existUsers = await User.findAll({
-                where: {
-                    email: user_id,
-                },
-            });
-
-            if (existUsers.length) {
-                res.status(400).send({
-                    message: '이미 가입된 이메일 입니다.',
-                });
-                return;
-            }
-
-            const user = await User.create({
-                email: user_id,
-                phone: phone,
-                name: name,
-                birth: birth,
-                gender: gender,
-            });
-
-            const token = jwt.sign({ userIdx: user.idx_user }, jwtKey);
-            res.status(201).send({
-                token,
-            });
-        } catch (error) {
-            console.log(error);
-            res.status(400).send({
-                message: '요청한 데이터의 형식이 올바르지 않습니다.',
-            });
-        }
-    },
-
     auth: async (req, res, next) => {
-        const { idx_user, email, name } = res.locals.user;
-
         try {
+            let { email } = req.body;
             const code = makeRandomCode(6);
 
-            await User.update(
-                { verification_number: code },
-                {
-                    where: {
-                        idx_user: idx_user,
-                    },
-                }
-            );
+            const user = await User.findOne({
+                where: { email },
+            });
+            if (user) {
+                await User.update(
+                    { verification_number: code },
+                    {
+                        where: { idx_user: user.idx_user },
+                    }
+                );
+            } else {
+                await User.create({
+                    email,
+                    verification_number: code,
+                });
+            }
 
-            mailSender.sendGmail({ email, name, code });
-            res.status(201).send({});
+            mailSender.sendGmail({ email, code });
+            res.send({});
         } catch (error) {
-            console.log(error);
-            res.status(400).send({
-                message: '알 수 없는 에러가 발생했습니다..',
+            res.status(400).json({
+                message: '알 수 없는 에러가 발생했습니다.',
             });
         }
     },
 
     authComfirm: async (req, res, next) => {
         try {
-            let { code } = await userSchema.patchAuth.validateAsync(req.body);
-            const { idx_user, verification_number } = res.locals.user;
-
+            let { email, code } = req.body;
+            // await userSchema.patchAuth.validateAsync(req.body)
             try {
-                if (verification_number == code) {
-                    await User.update(
-                        { sign_up_verification: 1 },
+                const user = await User.findOne({
+                    where: {
+                        email,
+                    },
+                });
+
+                if (!user) {
+                    res.status(401).json({
+                        message: '존재하지 않는 이메일입니다.',
+                    });
+                    return;
+                }
+
+                if (user.verification_number == code) {
+                    const token = jwt.sign(
+                        { userIdx: user.idx_user },
+                        jwtEmailKey,
                         {
-                            where: {
-                                idx_user: idx_user,
-                            },
+                            expiresIn: '1h',
                         }
                     );
-
-                    res.status(201).send({});
+                    res.status(201).send({ token });
                 } else {
                     res.status(400).send({
                         message: '인증코드가 일치하지 않습니다.',
@@ -103,6 +82,52 @@ const userService = {
             });
         }
     },
+
+    join: async (req, res, next) => {
+        try {
+            let { user_id, phone, name, birth, gender } =
+                await userSchema.postJoin.validateAsync(req.body);
+            const user = res.locals.user;
+            console.log("라우터",user.email);
+            if (user.email != user_id) {
+                res.status(400).send({
+                    message: '인증된 이메일과 일치하지 않습니다.',
+                });
+                return;
+            }
+
+            await User.update(
+                {
+                    phone: phone,
+                    name: name,
+                    birth: birth,
+                    gender: gender,
+                },
+                { where: { email: user_id } }
+            );
+
+            // 블록체인 관련 작업 (블록체인에 저장된 정보 삭제)
+            let args = [user_id];
+
+            let result = await sdk.send(false, 'deleteCertificateByUserId', args);
+            let resultJSON = JSON.parse(result);
+           
+            console.log(resultJSON);
+
+            const token = jwt.sign({ userIdx: user.idx_user }, jwtJoinKey);
+
+            res.status(201).send({
+                token,
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(400).send({
+                message: '요청한 데이터의 형식이 올바르지 않습니다.',
+            });
+        }
+    },
+
+    
 };
 
 module.exports = userService;

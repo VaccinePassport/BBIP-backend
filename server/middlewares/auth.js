@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { jwtKey } = require('../config/config');
+const { jwtJoinKey, jwtEmailKey } = require('../config/config');
 const { User } = require('../models');
 
 module.exports = (req, res, next) => {
@@ -22,6 +22,13 @@ module.exports = (req, res, next) => {
     }
 
     try {
+        let jwtKey = jwtJoinKey;
+        try {
+            if (req.route.path == '/join'){
+                jwtKey = jwtEmailKey;
+            };
+        } catch (error) {}
+
         const { userIdx } = jwt.verify(tokenValue, jwtKey);
 
         User.findByPk(userIdx).then((user) => {
@@ -31,18 +38,7 @@ module.exports = (req, res, next) => {
                 });
                 return;
             }
-
-            let isAuth = false;
-            try {
-                isAuth = req.route.path == '/auth-confirm' || req.route.path == '/auth';
-            } catch (error) {}
-
-            if (!isAuth && user.sign_up_verification == 0) {
-                res.status(403).send({
-                    message: '이메일 인증 후 사용하세요.',
-                });
-                return;
-            }
+ 
             res.locals.user = user;
             next();
         });

@@ -13,15 +13,15 @@ module.exports = function(sequelize, DataTypes) {
     },
     phone: {
       type: DataTypes.STRING(20),
-      allowNull: false
+      allowNull: true
     },
     name: {
       type: DataTypes.STRING(20),
-      allowNull: false
+      allowNull: true
     },
     birth: {
       type: DataTypes.DATEONLY,
-      allowNull: false
+      allowNull: true
     },
     gender: {
       type: DataTypes.STRING(20),
@@ -38,11 +38,6 @@ module.exports = function(sequelize, DataTypes) {
     verification_number: {
       type: DataTypes.STRING(100),
       allowNull: true
-    },
-    sign_up_verification: {
-      type: DataTypes.TINYINT,
-      allowNull: false,
-      defaultValue: 0
     },
     created_at: {
       type: DataTypes.DATE,
