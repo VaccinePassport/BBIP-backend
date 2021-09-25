@@ -7,7 +7,7 @@ var sdk = require('../sdk/sdk');
 const userService = {
     auth: async (req, res, next) => {
         try {
-            let { email } = req.body;
+            let { email } = await userSchema.postAuth.validateAsync(req.body);
             const code = makeRandomCode(6);
 
             const user = await User.findOne({
@@ -30,6 +30,7 @@ const userService = {
             mailSender.sendGmail({ email, code });
             res.send({});
         } catch (error) {
+            console.log(error);
             res.status(400).json({
                 message: '알 수 없는 에러가 발생했습니다.',
             });
@@ -38,8 +39,8 @@ const userService = {
 
     authComfirm: async (req, res, next) => {
         try {
-            let { email, code } = req.body;
-            // await userSchema.patchAuth.validateAsync(req.body)
+            let { email, code } = await userSchema.postAuthConfirm.validateAsync(req.body);
+            
             try {
                 const user = await User.findOne({
                     where: {
@@ -86,9 +87,9 @@ const userService = {
     join: async (req, res, next) => {
         try {
             let { user_id, phone, name, birth, gender } =
-                await userSchema.postJoin.validateAsync(req.body);
+                await userSchema.putJoin.validateAsync(req.body);
             const user = res.locals.user;
-            console.log('라우터', user.email);
+          
             if (user.email != user_id) {
                 res.status(400).send({
                     message: '인증된 이메일과 일치하지 않습니다.',
