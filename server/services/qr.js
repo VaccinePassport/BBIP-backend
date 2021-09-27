@@ -3,6 +3,8 @@ const { jwtQRKey } = require('../config/config');
 const { User, Follow, Group } = require('../models');
 const sequelize = require('sequelize');
 
+var map = new Map();
+
 const qrService = {
     generateGroupQR: async (req, res, next) => {
         let { user_id_list, qr_password } = req.body;
@@ -70,10 +72,8 @@ const qrService = {
             // pushValue[i].device_token에게 user.email, groupNo을 전송
 
             // check if friends agree to their personal information
-            //let result = await qrService.checkPersonalInformation(req, res, insertValue);
-            let pushResult = await qrService.checkPersonalInformation(
-                insertValue
-            );
+            let pushResult = await qrService.waitForFriend(groupNo);
+
             if (pushResult == 'success') {
                 // create qr (me+friends)
                 // 안에 넣을 정보 뭐인지 슬랙에서 확인
@@ -153,62 +153,104 @@ const qrService = {
             return [];
         }
     },
-    checkPersonalInformation: async (group_no_idx_follow_list) => {
+    waitForFriend: async (groupNo) => {
         try {
-            const start = new Date();
+            console.log(groupNo, '번 그룹');
             let timerId;
             let promise = new Promise((resolve, reject) => {
-                timerId = setInterval(async () => {
-                    let now = new Date();
-                    if (now - start > 30 * 1000) {
-                        // 1분 지나면(모든 이들이 동의하지 않으면) => timeout
-                        resolve('timeout');
-                    }
-                    // db에서 get하는거
-                    let group = await Group.findOne({
-                        where: {
-                            group_no: group_no_idx_follow_list[0].group_no,
-                        },
-                        attributes: [
-                            [
-                                sequelize.literal(
-                                    'count(CASE WHEN accept=1 THEN 1 END)'
-                                ),
-                                'acceptFriends',
-                            ],
-                            [
-                                sequelize.literal(
-                                    'count(CASE WHEN accept=-1 THEN 1 END)'
-                                ),
-                                'rejectFriends',
-                            ],
-                        ],
-                    });
-                    // console.log(group_no_idx_follow_list[0].group_no, group.get('acceptFriends'), group.get('rejectFriends'));
-                    if (
-                        group.get('acceptFriends') ==
-                        group_no_idx_follow_list.length
-                    ) {
-                        // 다른 사람들도 정보 완료 시 resolve
-                        resolve('success');
-                    } else if (group.get('rejectFriends') > 0) {
-                        // 1명이라도 거절 => fail
-                        resolve('fail');
-                    }
-                }, 1 * 1000);
+                timerId = setTimeout(() => resolve('time out'), 30 * 1000);
+                map.set(groupNo, resolve);
             });
-
             let result = await promise;
-            clearInterval(timerId);
+            clearTimeout(timerId);
+            map.delete(groupNo);
             return result;
         } catch (error) {
             console.log(error);
-            return 'fail';
         }
     },
-    checkPersonalInformation2: async (req, res, group_no_idx_follow_list) => {
+    permission: async (req, res, next) => {
         try {
-            
+            let { group_no, permission, latitude, longtitude } = req.body;
+            const user = res.locals.user;
+            console.log(group_no, '번 그룹의 동행인');
+
+            // SELECT * FROM bbip.group where idx_follow in (SELECT idx_follow FROM bbip.follow WHERE followed_id = 16) AND group_no = 3;
+            const group = await Group.findAll({
+                include: [
+                    {
+                        model: Follow,
+                        as: 'Follow_idx_follow',
+                        where: { followed_id: user.idx_user },
+                    },
+                ],
+                where: {
+                    group_no,
+                },
+            });
+
+            if (!group) {
+                res.status(400).json({
+                    message: '해당 qr 신청은 존재하지 않습니다.',
+                });
+                reuturn;
+            }
+
+            // permission 변경
+            await Group.update(
+                {
+                    accept: permission,
+                },
+                { where: { idx_group: group[0].idx_group } }
+            );
+
+            let groupPermission = await qrService.getPermission(group_no);
+            if (!groupPermission) {
+                res.json({ message: '타당하지 않은 group no' });
+                return;
+            }
+
+            // 누구 하나라도 비동의 / 모두 동의 시
+            try {
+                let resolveF = map.get(group_no);
+                if (
+                    groupPermission.get('acceptFriends') ==
+                    groupPermission.get('allFriends')
+                ) {
+                    resolveF('success');
+                } else if (groupPermission.get('rejectFriends') > 0) {
+                    resolveF('fail');
+                }
+            } catch (error) {}
+            res.json({});
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: '알 수 없는 에러 발생' });
+        }
+    },
+    getPermission: async (groupNo) => {
+        try {
+            let group = await Group.findOne({
+                where: {
+                    group_no: groupNo,
+                },
+                attributes: [
+                    [
+                        sequelize.literal(
+                            'count(CASE WHEN accept=1 THEN 1 END)'
+                        ),
+                        'acceptFriends',
+                    ],
+                    [
+                        sequelize.literal(
+                            'count(CASE WHEN accept=-1 THEN 1 END)'
+                        ),
+                        'rejectFriends',
+                    ],
+                    [sequelize.literal('count(*)'), 'allFriends'],
+                ],
+            });
+            return group;
         } catch (error) {
             console.log(error);
         }
