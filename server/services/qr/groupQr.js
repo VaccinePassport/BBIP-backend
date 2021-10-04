@@ -77,6 +77,7 @@ const groupQr = {
             let pushResult = await groupQr.waitForFriends(groupNo);
 
             if (pushResult == 'success') {
+                user_id_list.unshift(user.email);
                 const vaccine_list = await groupQr.getVaccineByEmails(user_id_list);
                 const qr_vaccine = signJWT.makeQrContent(vaccine_list);
                 res.json({
