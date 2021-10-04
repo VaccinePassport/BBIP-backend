@@ -1,10 +1,11 @@
 const { Follow, Group } = require('../../models');
 const getPermission = require('./getGroupPermission');
 const groupQr = require('./groupQr');
+const calcDistance = require('../../util/calcDistance');
 
 module.exports = async (req, res, next) => {
     try {
-        let { group_no, permission, latitude, longtitude } = req.body;
+        let { group_no, permission, latitude, longitude } = req.body;
         const user = res.locals.user;
         console.log(group_no, '번 그룹의 동행인');
 
@@ -22,14 +23,19 @@ module.exports = async (req, res, next) => {
             },
         });
 
-        if (!group) {
+        if (group.length === 0) {
             res.status(400).json({
                 message: '해당 qr 신청은 존재하지 않습니다.',
             });
-            reuturn;
+            return;
         }
 
-        // 거리 체크 => 100m 밖이면 자동 거부
+        // 일정 거리 밖이면 자동 거부
+        const distance = calcDistance(latitude, longitude, group[0].latitude, group[0].longitude);
+        console.log(distance);
+        if(distance > 150){
+            permission = -1;
+        }
 
         // permission 변경
         await Group.update(
@@ -63,3 +69,4 @@ module.exports = async (req, res, next) => {
         res.status(400).json({ message: '알 수 없는 에러 발생' });
     }
 }
+

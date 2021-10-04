@@ -75,6 +75,7 @@ const groupQr = {
             // send push
             // pushValue[i].device_token에게 user.email, groupNo을 전송
 
+
             // check if friends agree to their personal information
             let pushResult = await groupQr.waitForFriends(groupNo);
 
@@ -123,18 +124,18 @@ const groupQr = {
         let vaccineSet = new Set();
         let vaccineMap = new Map();
         for (let vaccine of resultJSON) {
-            let storedValueInMap = vaccineMap.get(vaccine.record.userId);
+            let storedValueInMap = vaccineMap.get(vaccine.record.userid);
             
             if (!storedValueInMap) {
-                vaccineMap.set(vaccine.record.userId, {
+                vaccineMap.set(vaccine.record.userid, {
                     vaccine_index: vaccine.vaccineKey,
                     vaccine_session: parseInt(vaccine.record.vaccinenumber),
                 });
                 vaccineSet.add(vaccine.vaccineKey);
             } else {
                 if (storedValueInMap.vaccine_session < parseInt(vaccine.record.vaccinenumber)){
-                    vaccineSet.delete(storedValueInMap.vaccineKey);
-                    vaccineMap.set(vaccine.record.userId, {
+                    vaccineSet.delete(storedValueInMap.vaccine_index);
+                    vaccineMap.set(vaccine.record.userid, {
                         vaccine_index: vaccine.vaccineKey,
                         vaccine_session: parseInt(vaccine.record.vaccinenumber),
                     });
