@@ -25,6 +25,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     },
+    latitude:{
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
+    longitude: {
+      type: DataTypes.DECIMAL,
+      allowNull: true
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: true

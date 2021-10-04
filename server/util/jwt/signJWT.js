@@ -19,7 +19,7 @@ const signJWT = {
             { vaccine_index: vaccineIndexList },
             jwtQRKey,
             {
-                expiresIn: '60s',
+                expiresIn: '120s',
             }
         );
     },

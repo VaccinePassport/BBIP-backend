@@ -8,7 +8,7 @@ var map = new Map();
 const groupQr = {
     resolveMap: map,
     generateGroupQR: async (req, res, next) => {
-        let { user_id_list, qr_password } = req.body;
+        let { user_id_list, qr_password, latitude, longitude } = req.body;
         const user = res.locals.user;
 
         // check qr password
@@ -53,6 +53,8 @@ const groupQr = {
                 insertValue.push({
                     group_no: groupNo,
                     idx_follow: friend.idx_follow,
+                    latitude,
+                    longitude
                 });
                 pushValue.push({
                     idx_follow: friend.idx_follow,
@@ -77,6 +79,7 @@ const groupQr = {
             let pushResult = await groupQr.waitForFriends(groupNo);
 
             if (pushResult == 'success') {
+                user_id_list.unshift(user.email);
                 const vaccine_list = await groupQr.getVaccineByEmails(user_id_list);
                 const qr_vaccine = signJWT.makeQrContent(vaccine_list);
                 res.json({
