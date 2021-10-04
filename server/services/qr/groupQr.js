@@ -1,7 +1,8 @@
 const { Group } = require('../../models');
 const sequelize = require('sequelize');
 const findRealFriendsInFriendList = require('./findRealFriendsInFriendList');
-const signJWT = require('../../util/jwt/signJWT')
+const signJWT = require('../../util/jwt/signJWT');
+var sdk = require('../../sdk/sdk');
 
 var map = new Map();
 const groupQr = {
@@ -61,7 +62,8 @@ const groupQr = {
 
             if (pushValue.length != user_id_list.length) {
                 res.status(400).json({
-                    message: 'push 알림에 동의하지 않은 동행자/100m이내 동행인 ~가 있습니다.',
+                    message:
+                        'push 알림에 동의하지 않은 동행자/100m이내 동행인 ~가 있습니다.',
                 });
                 return;
             }
@@ -75,10 +77,10 @@ const groupQr = {
             let pushResult = await groupQr.waitForFriends(groupNo);
 
             if (pushResult == 'success') {
-                // create qr (me+friends)
-                const qr_vaccine = signJWT.makeQrContent(['index1', 'index2', 'index3']);
+                const vaccine_list = await groupQr.getVaccineByEmails(user_id_list);
+                const qr_vaccine = signJWT.makeQrContent(vaccine_list);
                 res.json({
-                    qr_vaccine
+                    qr_vaccine,
                 });
             } else {
                 res.status(400).json({
@@ -108,7 +110,38 @@ const groupQr = {
         } catch (error) {
             console.log(error);
         }
-    }
+    },
+    getVaccineByEmails: async (emailList) => {
+        let args = emailList;
+        let result = await sdk.send(true, 'getCertificateByUserIds', args);
+        let resultJSON = JSON.parse(result);
+        console.log(resultJSON);
+
+        let vaccineSet = new Set();
+        let vaccineMap = new Map();
+        for (let vaccine of resultJSON) {
+            let storedValueInMap = vaccineMap.get(vaccine.record.userId);
+            
+            if (!storedValueInMap) {
+                vaccineMap.set(vaccine.record.userId, {
+                    vaccine_index: vaccine.vaccineKey,
+                    vaccine_session: parseInt(vaccine.record.vaccinenumber),
+                });
+                vaccineSet.add(vaccine.vaccineKey);
+            } else {
+                if (storedValueInMap.vaccine_session < parseInt(vaccine.record.vaccinenumber)){
+                    vaccineSet.delete(storedValueInMap.vaccineKey);
+                    vaccineMap.set(vaccine.record.userId, {
+                        vaccine_index: vaccine.vaccineKey,
+                        vaccine_session: parseInt(vaccine.record.vaccinenumber),
+                    });
+                    vaccineSet.add(vaccine.vaccineKey);
+                }
+            }
+        }
+        console.log(vaccineSet);
+        return Array.from(vaccineSet);
+    },
 };
 
 module.exports = groupQr;
