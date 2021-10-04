@@ -423,7 +423,7 @@ func (s *SmartContract) getCertificateByUserIds(APIstub shim.ChaincodeStubInterf
 
       var isUserInfo = false;
       for i := range args {
-         if (tempCertificate.UserId == i){ // 사용자의 접종 이력이면
+         if (tempCertificate.UserId == args[i]){ // 사용자의 접종 이력이면
             isUserInfo = true;
             break;
          }
