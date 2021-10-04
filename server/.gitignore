@@ -120,3 +120,5 @@ dist
 config/
 connection.json
 wallet/
+
+firebase-bbip-admin.json
