@@ -49,6 +49,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) pb.Response 
       return s.deleteVaccinationCertificate(APIstub, args)
    } else if function == "deleteCertificateByUserId" { // 특정인의 백신 이력 삭제
       return s.deleteCertificateByUserId(APIstub, args)
+   } else if function == "getCertificateByUserIds" { // 특정인들의 최근 백신 이력 조회 
+      return s.getCertificateByUserIds(APIstub, args)
    }
    fmt.Println("Please check your function : " + function)
    return shim.Error("Unknown function")
@@ -388,6 +390,68 @@ func (s *SmartContract) deleteCertificateByUserId(APIstub shim.ChaincodeStubInte
    }
    return shim.Success([]byte("{\"message\":\"success\"}"))
 }
+
+// 특정인들의 최근 백신 이력 조회 
+func (s *SmartContract) getCertificateByUserIds(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+   certificateKeyJSON, _ := APIstub.GetState(latestKey) // Find latestKey
+
+   certificateKey := CertificateKey{}
+   json.Unmarshal(certificateKeyJSON, &certificateKey)
+
+   var startKey = "VC1"
+   var endKey = certificateKey.Key + strconv.Itoa(certificateKey.Idx + 1)
+   fmt.Println("search range: ("+startKey+")~("+endKey+"-1)")
+
+   resultsIter, err := APIstub.GetStateByRange(startKey, endKey)
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+   defer resultsIter.Close()
+
+   var buffer bytes.Buffer
+   buffer.WriteString("[")
+   bArrayMemberAlreadyWritten := false
+   for resultsIter.HasNext() {
+      queryResponse, err := resultsIter.Next()
+      if err != nil {
+         return shim.Error(err.Error())
+      }
+
+      var tempCertificate VaccinationCertificate
+      json.Unmarshal(queryResponse.Value, &tempCertificate)
+
+      var isUserInfo = false;
+      for i := range args {
+         if (tempCertificate.UserId == i){ // 사용자의 접종 이력이면
+            isUserInfo = true;
+            break;
+         }
+      }
+      if (!isUserInfo){ // 사용자의 접종 이력이 아니면
+         continue
+      }
+
+      if bArrayMemberAlreadyWritten == true {
+         buffer.WriteString(", ")
+      }
+      buffer.WriteString("{\"vaccineKey\":")
+      buffer.WriteString("\"")
+      buffer.WriteString(queryResponse.Key)
+      buffer.WriteString("\"")
+
+      buffer.WriteString(", \"record\":")
+      buffer.WriteString(string(queryResponse.Value))
+      if(string(queryResponse.Value)==""){
+         buffer.WriteString("\"\"")
+      }
+      buffer.WriteString("}")
+      bArrayMemberAlreadyWritten = true
+   }
+   buffer.WriteString("]")
+   return shim.Success(buffer.Bytes())
+}
+
 
 func main() {
    fmt.Println("START CHAINCODE")
