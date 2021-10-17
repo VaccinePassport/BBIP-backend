@@ -1,6 +1,6 @@
 const { User, Follow, Group } = require('../../models');
 var sdk = require('../../sdk/sdk');
-const Op = require('Sequelize').Op;
+const Op = require('sequelize').Op;
 
 module.exports = {
     deleteUserInfo: async (req, res, next) => {
