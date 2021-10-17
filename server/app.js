@@ -12,8 +12,8 @@ admin.initializeApp({
 
 
 const { authMiddleware, versionMiddleware } = require('./middlewares');
-const { userRouter, vaccincationRouter, qrRouter, deviceTokenRouter } = require('./api-routes');
-// qrRouter, friendsRouter, vaccinationAgencyRouter
+const { userRouter, vaccincationRouter, qrRouter, deviceTokenRouter, friendsRouter } = require('./api-routes');
+//  vaccinationAgencyRouter
 
 const app = express();
 const http = Http.createServer(app);
@@ -30,7 +30,7 @@ app.use('/api/:version/user', versionMiddleware, userRouter);
 app.use('/api/:version/vaccincation', versionMiddleware, authMiddleware, vaccincationRouter);
 app.use('/api/:version/qr', versionMiddleware, authMiddleware, qrRouter);
 app.use('/api/:version/device', versionMiddleware, authMiddleware, deviceTokenRouter);
-//app.use('/api/:version/friends', versionMiddleware, friendsRouter);
+app.use('/api/:version/friends', versionMiddleware, authMiddleware, friendsRouter);
 //app.use('/api/:version/vaccinationAgency', versionMiddleware, vaccinationAgencyRouter);
 
 http.listen(PORT, () => {
