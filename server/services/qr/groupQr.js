@@ -73,7 +73,7 @@ const groupQr = {
             await Group.bulkCreate(insertValue);
 
             // send push
-            // pushValue[i].device_token에게 user.email, groupNo을 전송
+            // pushValue[i].device_token에게 user.email, groupNo을 포함한 메시지를 전송
 
 
             // check if friends agree to their personal information

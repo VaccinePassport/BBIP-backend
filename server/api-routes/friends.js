@@ -6,5 +6,5 @@ const router = express.Router();
 
 //router.post('/auth', friendsService.list); 빈파일이길래 우선 주석처리해놓음(파일위치때문에 충돌나서)
 router.get('/request', friendsService.getFollowRequests);
-
+router.patch('/accept',friendsService.acceptFollowRequest);
 module.exports = router;
