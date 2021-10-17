@@ -65,7 +65,7 @@ const groupQr = {
             if (pushValue.length != user_id_list.length) {
                 res.status(400).json({
                     message:
-                        'push 알림에 동의하지 않은 동행자/100m이내 동행인 ~가 있습니다.',
+                        'push 알림 설정을 하지 않은 동행자가 있습니다.',
                 });
                 return;
             }
@@ -119,7 +119,7 @@ const groupQr = {
         let args = emailList;
         let result = await sdk.send(true, 'getCertificateByUserIds', args);
         let resultJSON = JSON.parse(result);
-        console.log(resultJSON);
+        //console.log(resultJSON);
 
         let vaccineSet = new Set();
         let vaccineMap = new Map();
@@ -143,7 +143,7 @@ const groupQr = {
                 }
             }
         }
-        console.log(vaccineSet);
+        //console.log(vaccineSet);
         return Array.from(vaccineSet);
     },
 };
