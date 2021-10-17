@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
             });
             return;
         }
-
+        
         await updateFollowRequest(user.idx_user, follwingFriendIdx, accept);
         
         res.status(201).json({});
