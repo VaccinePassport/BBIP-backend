@@ -1,7 +1,7 @@
 const { User } = require('../../models');
 const { userSchema } = require('../../util');
 const signJWT = require('../../util/jwt/signJWT');
-var sdk = require('../../sdk/sdk');
+const { deleteFollowAndGroup, deleteVaccincation } = require('./deleteUser')
 
 module.exports = async (req, res, next) => {
     try {
@@ -26,10 +26,11 @@ module.exports = async (req, res, next) => {
             { where: { email: user_id } }
         );
 
+        // Delete existing friends & group
+        await deleteFollowAndGroup(user.idx_user);
+
         // Delete existing information stored on the blockchain
-        let args = [user_id];
-        let result = await sdk.send(false, 'deleteCertificateByUserId', args);
-        let resultJSON = JSON.parse(result);
+        const resultJSON = await deleteVaccincation(user.idx_user);
         if (resultJSON.message == 'success') {
             const token = signJWT.makeJoinToken(user.idx_user);
             res.status(201).send({
@@ -37,7 +38,6 @@ module.exports = async (req, res, next) => {
             });
         }
 
-        // Delete before friends
     } catch (error) {
         console.log(error);
         res.status(400).send({
