@@ -2,7 +2,7 @@ const { User, Follow, Group } = require('../../models');
 var sdk = require('../../sdk/sdk');
 const Op = require('sequelize').Op;
 
-module.exports = {
+const deleteUser = {
     deleteUserInfo: async (req, res, next) => {
         try {
             const user = res.locals.user;
@@ -22,10 +22,10 @@ module.exports = {
             );
 
             // Delete friends & group
-            await deleteFollowAndGroup(user.idx_user);
+            await deleteUser.deleteFollowAndGroup(user.idx_user);
 
             // Delete existing information stored on the blockchain
-            const resultJSON = await deleteVaccincation(user.idx_user);
+            const resultJSON = await deleteUser.deleteVaccincation(user.idx_user);
             if (resultJSON.message == 'success') {
                 res.status(204).end();
             } else {
@@ -40,7 +40,7 @@ module.exports = {
         }
     },
     deleteFollowAndGroup: async (userIdx) => {
-        const followIdxList = await findFollowIdxList(userIdx);
+        const followIdxList = await deleteUser.findFollowIdxList(userIdx);
         if (followIdxList) {
             await Group.destroy({
                 where: {
@@ -90,3 +90,5 @@ module.exports = {
         }
     },
 };
+
+module.exports = deleteUser;
