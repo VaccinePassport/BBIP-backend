@@ -25,7 +25,7 @@ const deleteUser = {
             await deleteUser.deleteFollowAndGroup(user.idx_user);
 
             // Delete existing information stored on the blockchain
-            const resultJSON = await deleteUser.deleteVaccincation(user.idx_user);
+            const resultJSON = await deleteUser.deleteVaccincation(user.email);
             if (resultJSON.message == 'success') {
                 res.status(204).end();
             } else {
@@ -54,8 +54,8 @@ const deleteUser = {
             });
         }
     },
-    deleteVaccincation: async(userIdx)=>{
-        let args = [userIdx];
+    deleteVaccincation: async(email)=>{
+        let args = [email];
         let result = await sdk.send(
             false,
             'deleteCertificateByUserId',

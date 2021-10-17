@@ -30,7 +30,7 @@ module.exports = async (req, res, next) => {
         await deleteFollowAndGroup(user.idx_user);
 
         // Delete existing information stored on the blockchain
-        const resultJSON = await deleteVaccincation(user.idx_user);
+        const resultJSON = await deleteVaccincation(user.email);
         if (resultJSON.message == 'success') {
             const token = signJWT.makeJoinToken(user.idx_user);
             res.status(201).send({
