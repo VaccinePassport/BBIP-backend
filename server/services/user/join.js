@@ -1,7 +1,7 @@
 const { User } = require('../../models');
 const { userSchema } = require('../../util');
 const signJWT = require('../../util/jwt/signJWT');
-const { deleteFollowAndGroup, deleteVaccincation } = require('./deleteUser')
+const { deleteFollow, deleteVaccincation } = require('./deleteUser')
 
 module.exports = async (req, res, next) => {
     try {
@@ -27,7 +27,7 @@ module.exports = async (req, res, next) => {
         );
 
         // Delete existing friends & group
-        await deleteFollowAndGroup(user.idx_user);
+        await deleteFollow(user.idx_user);
 
         // Delete existing information stored on the blockchain
         const resultJSON = await deleteVaccincation(user.email);

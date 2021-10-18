@@ -1,11 +1,9 @@
 const { User } = require('../../models');
 const { userSchema } = require('../../util');
-const signJWT = require('../../util/jwt/signJWT');
-var sdk = require('../../sdk/sdk');
 
 module.exports = async (req, res, next) => {
     try {
-        let { phone, name, birth, gender } = req.body;
+        let { phone, name, birth, gender } = await userSchema.patchUser.validateAsync(req.body);
         const user = res.locals.user;
 
         await User.update(

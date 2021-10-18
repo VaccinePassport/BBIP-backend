@@ -1,8 +1,9 @@
 const { User } = require('../../models');
+const { userSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        let { is_qr_password, qr_password } = req.body;
+        let { is_qr_password, qr_password } = await userSchema.patchQrPwd.validateAsync(req.body);
         const user = res.locals.user;
 
         qr_password = !is_qr_password ? null : qr_password;
