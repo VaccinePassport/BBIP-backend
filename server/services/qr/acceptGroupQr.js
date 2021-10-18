@@ -2,10 +2,11 @@ const { Follow, Group } = require('../../models');
 const getPermission = require('./getGroupPermission');
 const groupQr = require('./groupQr');
 const calcDistance = require('../../util/calcDistance');
+const { qrSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        let { group_no, permission, latitude, longitude } = req.body;
+        let { group_no, permission, latitude, longitude } = await qrSchema.patchPermission.validateAsync(req.body);
         const user = res.locals.user;
         console.log(group_no, '번 그룹의 동행인');
 

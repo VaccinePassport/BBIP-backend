@@ -1,9 +1,9 @@
 const { User, Follow } = require('../../models');
-const { userSchema } = require('../../util');
+const { friendsSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        const { friend_id, accept } = req.body;
+        const { friend_id, accept } = await friendsSchema.patchAccept.validateAsync(req.body);;
         const user = res.locals.user;
 
         const follwingFriendIdx = await findUserIdxInRequestList(
@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
             });
             return;
         }
-
+        
         await updateFollowRequest(user.idx_user, follwingFriendIdx, accept);
         
         res.status(201).json({});

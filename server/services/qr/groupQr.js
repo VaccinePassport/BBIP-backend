@@ -3,23 +3,25 @@ const sequelize = require('sequelize');
 const findRealFriendsInFriendList = require('./findRealFriendsInFriendList');
 const signJWT = require('../../util/jwt/signJWT');
 var sdk = require('../../sdk/sdk');
+const { qrSchema } = require('../../util');
 
 var map = new Map();
 const groupQr = {
     resolveMap: map,
     generateGroupQR: async (req, res, next) => {
-        let { user_id_list, qr_password, latitude, longitude } = req.body;
-        const user = res.locals.user;
-
-        // check qr password
-        if (user.qr_password) {
-            if (qr_password != user.qr_password) {
-                res.status(400).json({ message: '비밀번호가 틀렸습니다.' });
-                return;
-            }
-        }
-
         try {
+            let { user_id_list, qr_password, latitude, longitude } =
+                await qrSchema.postGroup.validateAsync(req.body);
+            const user = res.locals.user;
+
+            // check qr password
+            if (user.qr_password) {
+                if (qr_password != user.qr_password) {
+                    res.status(400).json({ message: '비밀번호가 틀렸습니다.' });
+                    return;
+                }
+            }
+            
             // check if user_id_list is a valid friend list
             let realFriendsList = await findRealFriendsInFriendList(
                 user.idx_user,
@@ -54,7 +56,7 @@ const groupQr = {
                     group_no: groupNo,
                     idx_follow: friend.idx_follow,
                     latitude,
-                    longitude
+                    longitude,
                 });
                 pushValue.push({
                     idx_follow: friend.idx_follow,
@@ -64,8 +66,7 @@ const groupQr = {
 
             if (pushValue.length != user_id_list.length) {
                 res.status(400).json({
-                    message:
-                        'push 알림 설정을 하지 않은 동행자가 있습니다.',
+                    message: 'push 알림 설정을 하지 않은 동행자가 있습니다.',
                 });
                 return;
             }
@@ -75,13 +76,14 @@ const groupQr = {
             // send push
             // pushValue[i].device_token에게 user.email, groupNo을 포함한 메시지를 전송
 
-
             // check if friends agree to their personal information
             let pushResult = await groupQr.waitForFriends(groupNo);
 
             if (pushResult == 'success') {
                 user_id_list.unshift(user.email);
-                const vaccine_list = await groupQr.getVaccineByEmails(user_id_list);
+                const vaccine_list = await groupQr.getVaccineByEmails(
+                    user_id_list
+                );
                 const qr_vaccine = signJWT.makeQrContent(vaccine_list);
                 res.json({
                     qr_vaccine,
@@ -125,7 +127,7 @@ const groupQr = {
         let vaccineMap = new Map();
         for (let vaccine of resultJSON) {
             let storedValueInMap = vaccineMap.get(vaccine.record.userid);
-            
+
             if (!storedValueInMap) {
                 vaccineMap.set(vaccine.record.userid, {
                     vaccine_index: vaccine.vaccineKey,
@@ -133,7 +135,10 @@ const groupQr = {
                 });
                 vaccineSet.add(vaccine.vaccineKey);
             } else {
-                if (storedValueInMap.vaccine_session < parseInt(vaccine.record.vaccinenumber)){
+                if (
+                    storedValueInMap.vaccine_session <
+                    parseInt(vaccine.record.vaccinenumber)
+                ) {
                     vaccineSet.delete(storedValueInMap.vaccine_index);
                     vaccineMap.set(vaccine.record.userid, {
                         vaccine_index: vaccine.vaccineKey,

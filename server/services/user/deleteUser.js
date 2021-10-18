@@ -22,7 +22,7 @@ const deleteUser = {
             );
 
             // Delete friends & group
-            await deleteUser.deleteFollowAndGroup(user.idx_user);
+            await deleteUser.deleteFollow(user.idx_user);
 
             // Delete existing information stored on the blockchain
             const resultJSON = await deleteUser.deleteVaccincation(user.email);
@@ -39,19 +39,15 @@ const deleteUser = {
             });
         }
     },
-    deleteFollowAndGroup: async (userIdx) => {
+    deleteFollow: async (userIdx) => {
         const followIdxList = await deleteUser.findFollowIdxList(userIdx);
         if (followIdxList) {
-            await Group.destroy({
-                where: {
-                    idx_follow: followIdxList,
+            await Follow.update(
+                {
+                    accept:-1,
                 },
-            });
-            await Follow.destroy({
-                where: {
-                    idx_follow: followIdxList,
-                },
-            });
+                { where: { idx_follow: followIdxList, } }
+            );
         }
     },
     deleteVaccincation: async(email)=>{
