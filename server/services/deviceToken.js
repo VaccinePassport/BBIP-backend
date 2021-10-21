@@ -5,7 +5,6 @@ const deviceTokenService = {
                 await userSchema.putJoin.validateAsync(req.body);
             const user = res.locals.user;
           
-            // user id 존재하지 않는 경우 check
             const exUser = await User.findOne({ where: { user_id } })
             if (!exUser) {
                 res.status(400).send({
@@ -13,7 +12,6 @@ const deviceTokenService = {
                 });
                 return;
             }
-
 
             await User.update(
                 {
