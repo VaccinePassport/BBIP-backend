@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
             attributes: [ 'idx_user' ]
         });
         
-        await registerFriends(user1.idx_user, friend[0].get('idx_user'));
+        await registerFriends(user.idx_user, friend[0].get('idx_user'));
         
         res.status(200).json({});
     } catch (error) {
