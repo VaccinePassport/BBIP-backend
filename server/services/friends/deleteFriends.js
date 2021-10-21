@@ -3,13 +3,13 @@ const { userSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        const { user_id } = req.body
+        const { friend_id } = req.body
         const user = res.locals.user;
        
         const followingIdx = await User.findOne({
             attributes:['idx_user'],
             where:{
-                email: user_id
+                email: friend_id
             },
         })
 
