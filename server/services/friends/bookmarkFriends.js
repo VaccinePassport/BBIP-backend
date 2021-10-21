@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
         let { friend_id, bookmark } = req.body;
         const user = res.locals.user;
 
-        const followedIdx = await User.findOne({
+        const followingIdx = await User.findOne({
             attributes:['idx_user'],
             where:{
                 email: friend_id
@@ -17,8 +17,8 @@ module.exports = async (req, res, next) => {
             bookmark: bookmark, 
         },{
             where: { 
-                followed_id: followedIdx[0].get('idx_user'),
-                following_id: user.idx_user
+                followed_id: user.idx_user,
+                following_id: followingIdx[0].get('idx_user'),
             }}
         );
         
