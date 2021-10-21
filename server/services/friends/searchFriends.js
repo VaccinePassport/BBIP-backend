@@ -3,12 +3,11 @@ const { userSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        let { user_id, user_name } = req.body;
+        let { user_id } = req.body;
 
         const user = await User.findOne({
             where: { 
                 email: user_id,
-                name: user_name
              },
             attributes: { email, name }
         });
