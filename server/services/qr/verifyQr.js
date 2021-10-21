@@ -5,7 +5,7 @@ var sdk = require('../../sdk/sdk');
 var map = new Map();
 const verifyQr = {
     resolveMap: map,
-    generateIndividualQr: async (req, res, next) => {
+    verifyQr: async (req, res, next) => {
         try {
             let { qrVaccine } = req.params;
             

@@ -7,5 +7,5 @@ module.exports = {
     makeGroupQr: groupQr.generateGroupQR,
     makeIndividualQr: individualQr.generateIndividualQr,
     acceptGroupQr,
-    verifyQr,
+    verifyQr: verifyQr.verifyQr,
 };
