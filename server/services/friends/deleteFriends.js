@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
 
         await Follow.destroy({
             where : { 
-                following_id : followingIdx,
+                following_id : followingIdx[0].get('idx_user'),
                 followed_id : user.idx_user
             },
         });
