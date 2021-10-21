@@ -6,5 +6,6 @@ const router = express.Router();
 router.post('/group', qrService.makeGroupQr);
 router.post('/individual', qrService.makeIndividualQr);
 router.patch('/permission', qrService.acceptGroupQr);
+router.get('/verify/:qrVaccine', qrService.verifyQr);
 
 module.exports = router;
