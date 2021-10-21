@@ -4,8 +4,15 @@ const { friendsSchema } = require('../../util');
 module.exports = async (req, res, next) => {
     try {
         const { friend_id } = req.body;
+
+        const user = await User.findAll({
+            where: { 
+                email: friend_id,
+             },
+            attributes: [ 'idx_user' ]
+        });
         
-        await registerFriends(followedIds, followingEmail, friend_id);
+        await registerFriends(followedIds, user[0].get('idx_user'));
         
         res.status(200).json({});
     } catch (error) {
@@ -16,38 +23,12 @@ module.exports = async (req, res, next) => {
     }
 };
 
-const findUserIdxInRequestList = async (followedIdx, followingEmail) => {
+const registerFriends = async (followedIdx, followingIdx) => {
     try {
-        const followingIdx = await Follow.findAll({
-            attributes: ['following_id'],
-            include: [
-                {
-                    model: User,
-                    required: true,
-                    as: 'User_following_id',
-                    where: { email: followingEmail },
-                    attributes: [],
-                },
-            ],
-            where: {
-                followed_id: followedIdx,
-                accept: 0,
-            },
+        return await Follow.create({
+           followingId : followedIdx,
+           followedId : followingIdx
         });
-        return followingIdx[0].get('following_id');
-    } catch (error) {
-        return undefined;
-    }
-};
-
-const registerFriends = async (followedIdx, followingIdx, accept) => {
-    try {
-        return await Follow.update(
-            {
-                accept,
-            },
-            { where: { following_id: followingIdx, followed_id: followedIdx } }
-        );
     } catch (error) {
         return undefined;
     }
