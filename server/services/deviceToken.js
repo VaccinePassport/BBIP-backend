@@ -1,3 +1,5 @@
+const { User } = require('../../models');
+
 const deviceTokenService = {
     save: async (req, res, next) => {
         try {
