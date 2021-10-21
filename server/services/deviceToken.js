@@ -5,13 +5,12 @@ const deviceTokenService = {
         try {
             let { device_token } = req.body;
             const user = res.locals.user;
-          
 
             await User.update(
                 {
                     device_token : device_token
                 },
-                { where: { user_idx: user.user_idx } }
+                { where: { user_idx: user.idx_user } }
             );
 
         } catch (error) {
