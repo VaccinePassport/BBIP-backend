@@ -25,7 +25,7 @@ const groupQr = {
             // check if user_id_list is a valid friend list
             let realFriendsList = await findRealFriendsInFriendList(
                 user.idx_user,
-                user_id_list
+                user_id_list 
             );
             if (realFriendsList.length != user_id_list.length) {
                 res.status(400).json({

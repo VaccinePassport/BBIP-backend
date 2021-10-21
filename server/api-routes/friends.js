@@ -4,7 +4,13 @@ const friendsService = require('../services/friends');
 
 const router = express.Router();
 
-//router.post('/auth', friendsService.list); 빈파일이길래 우선 주석처리해놓음(파일위치때문에 충돌나서)
+router.get('/list', friendsService.getFriendList);
+router.get('/', friendsService.searchFriends);
+router.post('/', friendsService.registerFriends);
+router.patch('/', friendsService.bookmarkFriends);
+router.delete('/', friendsService.deleteFriends);
+router.get('/vaccination', friendsService.getVaccinationInfo);
+
 router.get('/request', friendsService.getFollowRequests);
 router.patch('/accept',friendsService.acceptFollowRequest);
 module.exports = router;

@@ -9,12 +9,12 @@ var map = new Map();
 const push = {
     pushAlarm: async (req, res, next) => {
         // 배열로 deviceToken, 사용자 id
-        let { deviceToken } = req.body
+        let { deviceToken, title, body } = req.body
         
         let message = {
             notification: {
-                title: "test title",
-                body: "test body"
+                title,
+                body
             },
             token : deviceToken
         }
