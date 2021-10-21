@@ -1,7 +1,5 @@
 const { User, Follow } = require('../../models');
 const { userSchema } = require('../../util');
-const { User } = require('../../models');
-const { userSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {

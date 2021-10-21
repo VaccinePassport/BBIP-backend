@@ -1,14 +1,9 @@
 const admin = require('firebase-admin')
-const jwt = require('jsonwebtoken');
-const { jwtQRKey } = require('../config/config');
-const { User, Follow, Group } = require('../models');
-const sequelize = require('sequelize');
 
 var map = new Map();
 
 const push = {
     pushAlarm: async (req, res, next) => {
-        // 배열로 deviceToken, 사용자 id
         let { deviceToken, title, body } = req.body
         
         let message = {
@@ -29,7 +24,21 @@ const push = {
             .catch(function(err){
                 console.log("error sending message", err)
                 return res.status(400).json({success:false})
-            })
+            });
+    },
+    pushAlarm2: async (deviceTokenList, title, body) => {
+        for (const deviceToken of deviceTokenList) {
+            let message = {
+                notification: {
+                    title,
+                    body
+                },
+                token : deviceToken
+            }
+            await admin.messaging().send(message).catch(err => {
+                console.log("error sending message", err);
+            });
+        }
     }
 }
 

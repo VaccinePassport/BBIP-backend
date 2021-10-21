@@ -3,7 +3,7 @@ const sequelize = require('sequelize');
 const findRealFriendsInFriendList = require('./findRealFriendsInFriendList');
 const signJWT = require('../../util/jwt/signJWT');
 var sdk = require('../../sdk/sdk');
-const { qrSchema } = require('../../util');
+const { qrSchema, push } = require('../../util');
 
 var map = new Map();
 const groupQr = {
@@ -58,10 +58,9 @@ const groupQr = {
                     latitude,
                     longitude,
                 });
-                pushValue.push({
-                    idx_follow: friend.idx_follow,
-                    device_token: friend.User_followed_id.device_token,
-                });
+                if(friend.User_followed_id.device_token){
+                    pushValue.push(friend.User_followed_id.device_token);
+                }
             }
 
             if (pushValue.length != user_id_list.length) {
@@ -74,7 +73,7 @@ const groupQr = {
             await Group.bulkCreate(insertValue);
 
             // send push
-            // pushValue[i].device_token에게 user.email, groupNo을 포함한 메시지를 전송
+            push.pushAlarm2(pushValue, "[BBIP] ${groupNo}그룹) QR 생성 요청", "${user.email}님이 QR을 생성하고자 합니다. 동의하시나요?");
 
             // check if friends agree to their personal information
             let pushResult = await groupQr.waitForFriends(groupNo);
