@@ -10,10 +10,11 @@ module.exports = async (req, res, next) => {
              },
             attributes: [ 'email', 'name' ]
         });
+        console.log(user)
         if (user) {
             res.json({
-                user_id : user.email,
-                user_name : user.name
+                user_id : user[0].get('email'),
+                user_name : user[0].get('name')
             });
         } else {
             res.status(400).json({
