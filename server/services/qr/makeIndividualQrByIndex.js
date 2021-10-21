@@ -14,8 +14,15 @@ const makeIndividualQrByIndex = async (req, res, next) => {
             }
         }
         
-        const vaccine_info = await getVaccineByIdx(user.email);
-        const qr_vaccine = signJWT.makeQrContent(vaccine_info);
+        const vaccineInfo = await getVaccineByIdx(user.email, vaccineIndex);
+        if(!vaccineInfo){
+            res.status(400).send({
+                message: "접근할 수 없는 백신 이력입니다."
+            });
+            return;
+        } 
+        console.log([vaccineInfo]);
+        const qr_vaccine = signJWT.makeQrContent([vaccineInfo]);
         res.json({
             qr_vaccine,
         });
@@ -27,39 +34,18 @@ const makeIndividualQrByIndex = async (req, res, next) => {
         });
         return;
     }
-},
+};
     
-const getVaccineByIdx = async (email) => {
-    let args = email;
-    let result = await sdk.send(true, 'getCertificateByUserId', args);
+const getVaccineByIdx = async (email, vaccineIndex) => {
+    let args = [String(vaccineIndex)];
+    let result = await sdk.send(true, 'getCertificateByCertKey', args);
     let resultJSON = JSON.parse(result);
 
-    let vaccineSet = new Set();
-    let vaccineMap = new Map();
-    for (let vaccine of resultJSON) {
-        let storedValueInMap = vaccineMap.get(vaccine.record.userid);
+    if (resultJSON[0].record == '' || (email != resultJSON[0].record.userid)) {
+        return undefined;
+    } 
 
-        if (!storedValueInMap) {
-            vaccineMap.set(vaccine.record.userid, {
-                vaccine_index: vaccine.vaccineKey,
-                vaccine_session: parseInt(vaccine.record.vaccinenumber),
-            });
-            vaccineSet.add(vaccine.vaccineKey);
-        } else {
-            if (
-                storedValueInMap.vaccine_session <
-                parseInt(vaccine.record.vaccinenumber)
-            ) {
-                vaccineSet.delete(storedValueInMap.vaccine_index);
-                vaccineMap.set(vaccine.record.userid, {
-                    vaccine_index: vaccine.vaccineKey,
-                    vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                });
-                vaccineSet.add(vaccine.vaccineKey);
-            }
-        }
-    }
-    return Array.from(vaccineSet);
+    return resultJSON[0].vaccineKey;
 }
 
 module.exports = makeIndividualQrByIndex;
