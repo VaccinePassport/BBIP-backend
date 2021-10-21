@@ -6,9 +6,8 @@ module.exports = async (req, res, next) => {
         let { friend_id, bookmark } = req.body;
         const user = res.locals.user;
 
-        // 이메일로 아이디 찾기
         const following_idx = await User.findOne({
-            attributes:['id'],
+            attributes:['idx_user'],
             where:{
                 email: friend_id
             },
@@ -19,7 +18,7 @@ module.exports = async (req, res, next) => {
         },{
             where: { 
                 followed_id: user.idx_user,
-                following_id: following_idx
+                following_id: following_idx[0].get('idx_user')
             }}
         );
         
