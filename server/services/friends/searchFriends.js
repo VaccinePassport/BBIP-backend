@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
             where: { 
                 email: user_id,
              },
-            attributes: [ email, name ]
+            attributes: [ 'email', 'name' ]
         });
         if (user) {
             res.json({
