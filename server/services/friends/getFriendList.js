@@ -4,9 +4,8 @@ const deleteFriends = require('./deleteFriends');
 
 module.exports = async (req, res, next) => {
     try {
-        const { friend_id } = req.body
-        const user = req.user_id
-        const friend = await deleteFriends(friend_id);
+        const user = res.locals.user;
+        const friend = await findFriends(user.idx_user);
         res.json({
             friend: friend,
         });
@@ -18,7 +17,7 @@ module.exports = async (req, res, next) => {
     }
 };
 
-const deleteFriends = async (userIdx) => {
+const findFriends = async (userIdx) => {
     /*
     SELECT email, name FROM bbip.follow f
     INNER JOIN bbip.user u ON u.idx_user = f.following_id
