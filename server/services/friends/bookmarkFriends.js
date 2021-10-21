@@ -6,14 +6,6 @@ module.exports = async (req, res, next) => {
         let { friend_id, bookmark } = req.body;
         const user = res.locals.user;
 
-        // if (bookmark == 0 ) {
-        //     bookmark = 1
-        // } else if (bookmark == 1){
-        //     bookmark = 0
-        // } else {
-        //     // bookmark 옵션??
-        // }  
-
         // 이메일로 아이디 찾기
         const following_idx = await User.findOne({
             attributes:['id'],
