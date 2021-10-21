@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
         const { friend_id } = req.body
         const user = res.locals.user;
        
-        const followingIdx = await User.findOne({
+        const followingIdx = await User.findAll({
             attributes:['idx_user'],
             where:{
                 email: friend_id
