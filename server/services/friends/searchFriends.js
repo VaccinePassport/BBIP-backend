@@ -1,5 +1,4 @@
-const { User, Follow } = require('../../models');
-const { userSchema } = require('../../util');
+const { User } = require('../../models');
 
 module.exports = async (req, res, next) => {
     try {
@@ -9,7 +8,7 @@ module.exports = async (req, res, next) => {
             where: { 
                 email: user_id,
              },
-            attributes: { email, name }
+            attributes: [ email, name ]
         });
         if (user) {
             res.json({
