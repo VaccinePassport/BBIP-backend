@@ -4,6 +4,7 @@ const { friendsSchema } = require('../../util');
 module.exports = async (req, res, next) => {
     try {
         let { friend_id } = req.body;
+        const user = res.locals.user;
 
         const user = await User.findAll({
             where: { 
@@ -12,7 +13,7 @@ module.exports = async (req, res, next) => {
             attributes: [ 'idx_user' ]
         });
         
-        await registerFriends(followedIds, user[0].get('idx_user'));
+        await registerFriends(user.idx_user, user[0].get('idx_user'));
         
         res.status(200).json({});
     } catch (error) {
