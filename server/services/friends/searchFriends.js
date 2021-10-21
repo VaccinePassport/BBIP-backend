@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
     try {
         let { user_id } = req.body;
 
-        const user = await User.findAll({
+        const user = await User.find({
             where: { 
                 email: user_id,
              },
