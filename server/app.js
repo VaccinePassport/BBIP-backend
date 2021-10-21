@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 app.use(express.json());
 app.use('/api/:version/user', versionMiddleware, userRouter);
 app.use(
-    '/api/:version/vaccincation',
+    '/api/:version/vaccination',
     versionMiddleware,
     authMiddleware,
     vaccincationRouter
@@ -56,7 +56,7 @@ app.get('/pushTest', async (req, res, next) => {
   try {
     let { deviceToken, title, body } = req.query;
     console.log(deviceToken, title, body);
-    
+
     let message = {
       notification: {
           title,
