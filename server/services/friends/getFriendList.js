@@ -1,6 +1,4 @@
 const { User, Follow } = require('../../models');
-const { userSchema } = require('../../util');
-const deleteFriends = require('./deleteFriends');
 
 module.exports = async (req, res, next) => {
     try {
