@@ -1,4 +1,4 @@
-const { User } = require('../../models');
+const { User } = require('../models');
 
 const deviceTokenService = {
     save: async (req, res, next) => {
