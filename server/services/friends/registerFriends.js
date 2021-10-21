@@ -3,7 +3,7 @@ const { friendsSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        const { friend_id } = req.body;
+        let { friend_id } = req.body;
 
         const user = await User.findAll({
             where: { 
