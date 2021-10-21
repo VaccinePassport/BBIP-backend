@@ -4,6 +4,7 @@ const vaccincationSchema = require('./joi/vaccincationSchema');
 const qrSchema = require('./joi/qrSchema');
 const friendsSchema = require('./joi/friendsSchema');
 const makeRandomCode = require('./makeRandomCode');
+const push = require('./push');
 
 module.exports = {
     makeRandomCode,
@@ -12,4 +13,5 @@ module.exports = {
     vaccincationSchema,
     qrSchema,
     friendsSchema,
+    push,
 };
