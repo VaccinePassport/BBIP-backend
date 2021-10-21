@@ -4,6 +4,6 @@ const deviceTokenService = require('../services/deviceToken');
 
 const router = express.Router();
 
-router.post('/device', deviceTokenService.save);
+router.post('/', deviceTokenService.save);
 
 module.exports = router;

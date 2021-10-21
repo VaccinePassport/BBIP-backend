@@ -17,6 +17,7 @@ const {
     qrRouter,
     deviceTokenRouter,
     friendsRouter,
+    deviceRouter,
 } = require('./api-routes');
 //  vaccinationAgencyRouter
 
@@ -50,6 +51,11 @@ app.use(
     versionMiddleware,
     authMiddleware,
     friendsRouter
+);app.use(
+  '/api/:version/device',
+  versionMiddleware,
+  authMiddleware,
+  deviceRouter
 );
 
 app.get('/pushTest', async (req, res, next) => {
