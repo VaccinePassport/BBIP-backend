@@ -1,23 +1,15 @@
 const deviceTokenService = {
     save: async (req, res, next) => {
         try {
-            let { user_id, deviceToken } =
-                await userSchema.putJoin.validateAsync(req.body);
+            let { device_token } = req.body;
             const user = res.locals.user;
           
-            const exUser = await User.findOne({ where: { user_id } })
-            if (!exUser) {
-                res.status(400).send({
-                    message: '유저가 존재하지 않습니다.',
-                });
-                return;
-            }
 
             await User.update(
                 {
-                    device_token : deviceToken
+                    device_token : device_token
                 },
-                { where: { userIdx: user_id } }
+                { where: { user_idx: user.user_idx } }
             );
 
         } catch (error) {
