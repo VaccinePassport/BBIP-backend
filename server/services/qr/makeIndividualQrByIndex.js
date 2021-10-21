@@ -3,8 +3,9 @@ var sdk = require('../../sdk/sdk');
 
 const makeIndividualQrByIndex = async (req, res, next) => {
     try {
-        const { vaccineIndex } = req.param;
+        const { vaccineIndex } = req.params;
         const { qr_password } = req.body;
+        
         const user = res.locals.user;
 
         if (user.qr_password) {
