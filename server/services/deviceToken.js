@@ -10,7 +10,7 @@ const deviceTokenService = {
                 {
                     device_token : device_token
                 },
-                { where: { user_idx: user.idx_user } }
+                { where: { idx_user: user.idx_user } }
             );
 
         } catch (error) {
