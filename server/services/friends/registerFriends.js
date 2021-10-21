@@ -6,14 +6,14 @@ module.exports = async (req, res, next) => {
         let { friend_id } = req.body;
         const user = res.locals.user;
 
-        const user = await User.findAll({
+        const friend = await User.findAll({
             where: { 
                 email: friend_id,
              },
             attributes: [ 'idx_user' ]
         });
         
-        await registerFriends(user.idx_user, user[0].get('idx_user'));
+        await registerFriends(user1.idx_user, friend[0].get('idx_user'));
         
         res.status(200).json({});
     } catch (error) {
