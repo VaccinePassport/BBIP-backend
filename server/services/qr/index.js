@@ -7,7 +7,7 @@ const makeIndividualQrByIndex = require('./makeIndividualQrByIndex');
 module.exports = {
     makeGroupQr: groupQr.generateGroupQR,
     makeIndividualQr: individualQr.generateIndividualQr,
-    acceptGroupQr,
-    verifyQr,
     makeIndividualQrByIndex: makeIndividualQrByIndex,
+    acceptGroupQr,
+    verifyQr: verifyQr.verifyQr,
 };
