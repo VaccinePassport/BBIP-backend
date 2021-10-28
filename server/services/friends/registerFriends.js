@@ -1,5 +1,7 @@
 const { User, Follow } = require('../../models');
 const { friendsSchema } = require('../../util');
+const admin = require('firebase-admin')
+const { push } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
@@ -14,6 +16,9 @@ module.exports = async (req, res, next) => {
         });
         
         await registerFriends(user.idx_user, friend[0].get('idx_user'));
+        deviceToken = await findFriendDeviceToken(friend_id)
+
+        push.push(deviceToken, `[BBIP]동행인 등록 요청`, `${friend_id}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
         
         res.status(200).json({});
     } catch (error) {
@@ -34,3 +39,17 @@ const registerFriends = async (followedIdx, followingIdx) => {
         return undefined;
     }
 };
+
+const findFriendDeviceToken = async(deviceToken) => {
+    try{
+        return await User.findAll({
+            where: { 
+                email: deviceToken,
+             },
+            attributes: [ 'device_token' ]
+        });
+
+    }catch (error) {
+        return undefined;
+    }
+}

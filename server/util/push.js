@@ -26,6 +26,20 @@ const push = {
                 return res.status(400).json({success:false})
             });
     },
+
+    push: async(deviceToken, title, body) => {
+        let message = {
+            notification: {
+                title,
+                body
+            },
+            token : deviceToken
+        }
+        await admin.messaging().send(message).catch(err => {
+            console.log("error sending message", err);
+        });
+    },
+    
     pushAlarm2: async (deviceTokenList, title, body) => {
         for (const deviceToken of deviceTokenList) {
             let message = {
