@@ -5,7 +5,7 @@ var sdk = require('../../sdk/sdk');
 var map = new Map();
 const verifyQr = {
     resolveMap: map,
-    generateIndividualQr: async (req, res, next) => {
+    verifyQr: async (req, res, next) => {
         try {
             let { qrVaccine } = req.params;
             
@@ -26,7 +26,7 @@ const verifyQr = {
         
    getVaccineByIndex: async(index) => {
         let args = [String(index)];
-        let result = await sdk.send(true, 'getCertificateByCertKeys', args);
+        let result = await sdk.send(true, 'getCertificateByCertKey', args);
         let resultJSON = JSON.parse(result);
 
         let vaccineSet = new Set();
