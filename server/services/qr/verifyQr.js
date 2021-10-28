@@ -26,7 +26,7 @@ const verifyQr = {
         
    getVaccineByIndex: async(index) => {
         let args = [String(index)];
-        let result = await sdk.send(true, 'getCertificateByCertKey', args);
+        let result = await sdk.send(true, 'getCertificateByCertKeys', args);
         let resultJSON = JSON.parse(result);
 
         let vaccineSet = new Set();
