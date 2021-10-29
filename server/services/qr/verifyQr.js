@@ -10,11 +10,12 @@ const verifyQr = {
             let { qrVaccine } = req.params;
             
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
+            console.log(vaccine_index)
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index);
             console.log(vaccine_info)
 
             res.json({
-                verified_data: vaccine_index
+                verified_data: vaccine_info
             });
 
         } catch (error) {
