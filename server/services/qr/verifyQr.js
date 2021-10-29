@@ -10,7 +10,23 @@ const verifyQr = {
             let { qrVaccine } = req.params;
             
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
-            console.log(vaccine_index)
+            console.log(vaccine_index)  
+            
+//그룹
+//             | { vaccine_index: [ 'VC11', 'VC14', 'VC6' ],
+// 0|app  |   iat: 1635478940,
+// 0|app  |   exp: 1635479060 }
+
+//개인
+// { vaccine_index:
+//     0|app  |    [ { date: '2021-09-01',
+//     0|app  |        location: '서울아산병원',
+//     0|app  |        vaccine_type: '화이자',
+//     0|app  |        vaccine_session: 2,
+//     0|app  |        user_id: 'rhdwn979600@naver.com',
+//     0|app  |        vaccine_index: 'VC66' } ],
+//     0|app  |   iat: 1635478999,
+//     0|app  |   exp: 1635479119 }
             console.log(vaccine_index.vaccine_index[0].vaccine_index)
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index[0].vaccine_index)
 

@@ -37,19 +37,9 @@ const individualQr = {
         let args = [email];
         let result = await sdk.send(true, 'getCertificateByUserId', args);
         let resultJSON = JSON.parse(result);
-    
-        let vaccineList = [];
-        for (let vaccine of resultJSON) {
-            vaccineList.push({
-                date: vaccine.record.date,
-                location: vaccine.record.location,
-                vaccine_type: vaccine.record.vaccinetype,
-                vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                user_id: vaccine.record.userid,
-                vaccine_index: vaccine.vaccineKey,
-            });
-        }
-        return vaccineList
+        console.log(resultJSON)
+
+        return resultJSON[0].vaccineKey
     },
 };
 
