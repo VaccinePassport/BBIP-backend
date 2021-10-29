@@ -10,18 +10,8 @@ const verifyQr = {
             let { qrVaccine } = req.params;
             
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
-            console.log(vaccine_index)  
 
-//그룹
-//             | { vaccine_index: [ 'VC11', 'VC14', 'VC6' ],
-// 0|app  |   iat: 1635478940,
-// 0|app  |   exp: 1635479060 }
-
-//개인
-// / vaccine_index: [ 'VC66' ], iat: 1635479597, exp: 1635479717 }
-
-            console.log(vaccine_index.vaccine_index)
-            const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index[0].vaccine_index)
+            const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index)
 
             // 푸쉬알림 : 검증 결과 성공
             res.json({
@@ -39,13 +29,13 @@ const verifyQr = {
     },
         
    getVaccineByIndex: async(index) => {
-        let args = [String(index)];
-        let result = await sdk.send(true, 'getCertificateByCertKey', args);
-        let resultJSON = JSON.parse(result);
-        console.log("json : " + resultJSON[0].vaccineKey)
 
         let vaccineList = [];
-        for (let vaccine of resultJSON) {
+        for (let vaccineIndex of index) {
+            let args = [String(vaccineIndex)];
+            let result = await sdk.send(true, 'getCertificateByCertKey', args);
+            let resultJSON = JSON.parse(result);
+            console.log("json : " + resultJSON[0].vaccineKey)
             vaccineList.push({
                 date: vaccine.record.date,
                 location: vaccine.record.location,
