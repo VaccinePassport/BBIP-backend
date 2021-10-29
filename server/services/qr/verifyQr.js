@@ -10,6 +10,7 @@ const verifyQr = {
             let { qrVaccine } = req.params;
             
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
+            console.log(vaccine_index.vaccine_index)
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index)
 
             res.json({
@@ -30,33 +31,7 @@ const verifyQr = {
         let result = await sdk.send(true, 'getCertificateByCertKeys', args);
         let resultJSON = JSON.parse(result);
 
-        let vaccineSet = new Set();
-        let vaccineMap = new Map();
-        for (let vaccine of resultJSON) {
-            let storedValueInMap = vaccineMap.get(vaccine.record.userid);
-
-            if (!storedValueInMap) {
-                vaccineMap.set(vaccine.record.userid, {
-                    vaccine_index: vaccine.vaccineKey,
-                    vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                });
-                vaccineSet.add(vaccine.vaccineKey);
-            } else {
-                if (
-                    storedValueInMap.vaccine_session <
-                    parseInt(vaccine.record.vaccinenumber)
-                ) {
-                    vaccineSet.delete(storedValueInMap.vaccine_index);
-                    vaccineMap.set(vaccine.record.userid, {
-                        vaccine_index: vaccine.vaccineKey,
-                        vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                    });
-                    vaccineSet.add(vaccine.vaccineKey);
-                }
-            }
-        }
-        return Array.from(vaccineSet);
-       
+        return resultJSON
    },
      
 };
