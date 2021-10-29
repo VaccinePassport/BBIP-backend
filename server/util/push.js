@@ -1,4 +1,8 @@
 const admin = require('firebase-admin')
+//const admin = require("firebase-admin"); 
+let serviceAccount = require("../firebase-bbip-admin.json"); 
+//admin.initializeApp({ credential: admin.credential.cert(serviceAccount), });
+try{ admin.initializeApp() } catch(err){ admin.app() }
 
 var map = new Map();
 
