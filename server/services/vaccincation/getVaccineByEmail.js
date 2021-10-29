@@ -7,6 +7,7 @@ module.exports = async (req, res, next) => {
     let args = [email];
     let result = await sdk.send(true, 'getCertificateByUserId', args);
     let resultJSON = JSON.parse(result);
+    console.log(resultJSON)
 
     let vaccineList = [];
     for (let vaccine of resultJSON) {
