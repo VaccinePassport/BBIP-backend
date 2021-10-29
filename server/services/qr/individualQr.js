@@ -19,7 +19,7 @@ const individualQr = {
             }
             
             const vaccine_info = await individualQr.getVaccineByEmail(user.email);
-            const qr_vaccine = signJWT.makeQrContent(vaccine_info);
+            const qr_vaccine = signJWT.makeQrContent([vaccine_info]);
             res.json({
                 qr_vaccine,
             });
