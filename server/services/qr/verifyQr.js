@@ -1,5 +1,6 @@
 const sequelize = require('sequelize');
 const verifyJWT = require('../../util/jwt/verifyJWT');
+const { push } = require('../../util');
 var sdk = require('../../sdk/sdk');
 
 var map = new Map();
@@ -8,12 +9,16 @@ const verifyQr = {
     verifyQr: async (req, res, next) => {
         try {
             let { qrVaccine } = req.params;
-            
+            const userIdx = res.locals.user.idx_user;
+            const deviceToken = verifyQr.findDeviceToken(userIdx)
+
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
 
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index)
 
             // 푸쉬알림 : 검증 결과 성공
+            push.push(deviceToken, `[BBIP]QR 검증 완료`, `QR 검증이 성공하였습니다.`);
+
             res.json({
                 verified_data: vaccine_info
             });
@@ -21,14 +26,15 @@ const verifyQr = {
         } catch (error) {
             console.log(error);
             // 푸쉬알림 : 검증 결과 실패
+            push.push(deviceToken, `[BBIP]QR 검증 실패`, `QR 검증이 실패하였습니다.`);
             res.status(400).json({
                 message: '알 수 없는 오류가 발생했습니다.',
             });
             return;
         }
     },
-        
-   getVaccineByIndex: async(index) => {
+
+    getVaccineByIndex: async (index) => {
 
         let vaccineList = [];
         for (let vaccineIndex of index) {
@@ -49,8 +55,20 @@ const verifyQr = {
         }
 
         return vaccineList
-   },
-     
+    },
+
+    findDeviceToken: async (userIdx) => {
+        try {
+            return await User.findAll({
+                where: { idx_user: userIdx },
+                attributes: ['device_token']
+            });
+
+        } catch (error) {
+            return undefined;
+        }
+    },
+
 };
 
 module.exports = verifyQr;
