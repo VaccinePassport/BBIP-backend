@@ -18,9 +18,9 @@ const verifyQr = {
 // 0|app  |   exp: 1635479060 }
 
 //개인
-// / { vaccine_index: 'VC66', iat: 1635479454, exp: 1635479574 }
+// / vaccine_index: [ 'VC66' ], iat: 1635479597, exp: 1635479717 }
 
-            console.log(vaccine_index.vaccine_index[0].vaccine_index)
+            console.log(vaccine_index.vaccine_index)
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index[0].vaccine_index)
 
             // 푸쉬알림 : 검증 결과 성공
