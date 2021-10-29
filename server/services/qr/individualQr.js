@@ -19,7 +19,7 @@ const individualQr = {
             }
             
             const vaccine_info = await individualQr.getVaccineByEmail(user.email);
-            const qr_vaccine = signJWT.makeQrContent([vaccine_info]);
+            const qr_vaccine = signJWT.makeQrContent(vaccine_info);
             res.json({
                 qr_vaccine,
             });
@@ -34,36 +34,22 @@ const individualQr = {
     },
         
     getVaccineByEmail: async (email) => {
-        let args = email;
+        let args = [email];
         let result = await sdk.send(true, 'getCertificateByUserId', args);
         let resultJSON = JSON.parse(result);
-
-        let vaccineSet = new Set();
-        let vaccineMap = new Map();
+    
+        let vaccineList = [];
         for (let vaccine of resultJSON) {
-            let storedValueInMap = vaccineMap.get(vaccine.record.userid);
-
-            if (!storedValueInMap) {
-                vaccineMap.set(vaccine.record.userid, {
-                    vaccine_index: vaccine.vaccineKey,
-                    vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                });
-                vaccineSet.add(vaccine.vaccineKey);
-            } else {
-                if (
-                    storedValueInMap.vaccine_session <
-                    parseInt(vaccine.record.vaccinenumber)
-                ) {
-                    vaccineSet.delete(storedValueInMap.vaccine_index);
-                    vaccineMap.set(vaccine.record.userid, {
-                        vaccine_index: vaccine.vaccineKey,
-                        vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                    });
-                    vaccineSet.add(vaccine.vaccineKey);
-                }
-            }
+            vaccineList.push({
+                date: vaccine.record.date,
+                location: vaccine.record.location,
+                vaccine_type: vaccine.record.vaccinetype,
+                vaccine_session: parseInt(vaccine.record.vaccinenumber),
+                user_id: vaccine.record.userid,
+                vaccine_index: vaccine.vaccineKey,
+            });
         }
-        return Array.from(vaccineSet);
+        return vaccineList
     },
 };
 
