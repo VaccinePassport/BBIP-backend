@@ -30,6 +30,7 @@ const verifyQr = {
         let args = [String(index)];
         let result = await sdk.send(true, 'getCertificateByCertKey', args);
         let resultJSON = JSON.parse(result);
+        console.log(resultJSON)
 
         return {
             date: resultJSON[0].record.date,
