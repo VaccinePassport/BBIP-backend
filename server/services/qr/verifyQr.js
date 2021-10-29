@@ -11,6 +11,7 @@ const verifyQr = {
             
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index);
+            console.log(vaccine_info)
             res.json({
                 verified_data: vaccine_info
             });
