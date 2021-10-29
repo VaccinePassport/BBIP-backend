@@ -37,12 +37,14 @@ const verifyQr = {
             let resultJSON = JSON.parse(result);
             console.log("json : " + resultJSON[0].vaccineKey)
             vaccineList.push({
-                date: vaccine.record.date,
-                location: vaccine.record.location,
-                vaccine_type: vaccine.record.vaccinetype,
-                vaccine_session: parseInt(vaccine.record.vaccinenumber),
-                user_id: vaccine.record.userid,
-                vaccine_index: vaccine.vaccineKey,
+                date: resultJSON[0].record.date,
+                location: resultJSON[0].record.location,
+                vaccine_type: resultJSON[0].record.vaccinetype,
+                vaccine_session: parseInt(
+                    resultJSON[0].record.vaccinenumber
+                ),
+                user_id: resultJSON[0].record.userid,
+                vaccine_index: resultJSON[0].vaccineKey,
             });
         }
 
