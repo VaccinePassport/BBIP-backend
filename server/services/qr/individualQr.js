@@ -39,7 +39,8 @@ const individualQr = {
         let resultJSON = JSON.parse(result);
         console.log(resultJSON[0].vaccineKey)
 
-        return resultJSON[0].vaccineKey
+        let vaccineKey = [resultJSON[0].vaccineKey];
+        return vaccineKey
     },
 };
 
