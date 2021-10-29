@@ -37,7 +37,7 @@ const individualQr = {
         let args = [email];
         let result = await sdk.send(true, 'getCertificateByUserId', args);
         let resultJSON = JSON.parse(result);
-        console.log(resultJSON)
+        console.log(resultJSON[0].vaccineKey)
 
         return resultJSON[0].vaccineKey
     },
