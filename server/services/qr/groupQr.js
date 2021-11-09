@@ -58,11 +58,15 @@ const groupQr = {
                     latitude,
                     longitude,
                 });
-                if(friend.User_followed_id.device_token){
+                
+                if(friend.User_followed_id && friend.User_followed_id.device_token){
                     pushValue.push(friend.User_followed_id.device_token);
                 }
+                if(friend.User_following_id && friend.User_following_id.device_token){
+                    pushValue.push(friend.User_following_id.device_token);
+                }
             }
-
+            console.log(pushValue);
             if (pushValue.length != user_id_list.length) {
                 res.status(400).json({
                     message: 'push 알림 설정을 하지 않은 동행자가 있습니다.',
@@ -74,7 +78,7 @@ const groupQr = {
 
             // send push
             push.pushAlarm2(pushValue, `[BBIP] ${groupNo}그룹) QR 생성 요청`, `${user.email}님이 QR을 생성하고자 합니다. 동의하시나요?`);
-
+            
             // check if friends agree to their personal information
             let pushResult = await groupQr.waitForFriends(groupNo);
 
