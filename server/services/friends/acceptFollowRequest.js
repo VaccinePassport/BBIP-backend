@@ -48,6 +48,7 @@ const findUserIdxInRequestList = async (followedIdx, followingEmail) => {
         });
         return followingIdx[0].get('following_id');
     } catch (error) {
+        console.log("[error]-acceptFollowRequest-findUserIdxInRequestList:",error);
         return undefined;
     }
 };
@@ -61,6 +62,7 @@ const updateFollowRequest = async (followedIdx, followingIdx, accept) => {
             { where: { following_id: followingIdx, followed_id: followedIdx } }
         );
     } catch (error) {
+        console.log("[error]-acceptFollowRequest-updateFollowRequest:",error);
         return undefined;
     }
 };
