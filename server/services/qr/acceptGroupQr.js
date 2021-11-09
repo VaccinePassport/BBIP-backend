@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
         console.log(group_no, '번 그룹의 동행인');
 
         // SELECT * FROM bbip.group where idx_follow in (SELECT idx_follow FROM bbip.follow WHERE followed_id = 16) AND group_no = 3;
-        const group = await Group.findAll({
+        let group = await Group.findAll({
             include: [
                 {
                     model: Follow,
@@ -23,7 +23,20 @@ module.exports = async (req, res, next) => {
                 group_no,
             },
         });
-
+        if (group.length === 0) {
+            group = await Group.findAll({
+                include: [
+                    {
+                        model: Follow,
+                        as: 'Follow_idx_follow',
+                        where: { following_id: user.idx_user },
+                    },
+                ],
+                where: {
+                    group_no,
+                },
+            });
+        }
         if (group.length === 0) {
             res.status(400).json({
                 message: '해당 qr 신청은 존재하지 않습니다.',
