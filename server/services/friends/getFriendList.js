@@ -30,7 +30,8 @@ const findFriends = async (userIdx) => {
     });
     const followRequestList = [];
     for (request of followRequests){
-        followRequestList.push(request.get("User_followed_id"))
+        console.log(request)
+        followRequestList.push(request.get("User_followed_id"), )
     }
     return followRequestList;
 };
