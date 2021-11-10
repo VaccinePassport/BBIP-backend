@@ -22,8 +22,8 @@ const findFriends = async (userIdx) => {
     WHERE bookmark = 1 AND followed_id = 16;
     */
     const followRequests = await Follow.findAll({
-        attributes: [],
-        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name', 'bookmark'] }],
+        attributes: ['bookmark'],
+        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name'] },],
         where: {
             following_id: userIdx,
         },
