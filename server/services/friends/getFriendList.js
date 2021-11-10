@@ -29,9 +29,13 @@ const findFriends = async (userIdx) => {
         },
     });
     const followRequestList = [];
+    const arr = [];
     for (request of followRequests){
-        console.log(request.get("User_followed_id"))
-        console.log(request.get("bookmark"))
+        arr = [
+            ...request.get("User_followed_id"),
+            {"bookmark" : request.get("bookmark")}
+        ]
+        console.log(arr)
         followRequestList.push(request.get("User_followed_id"))
     }
     return followRequestList;
