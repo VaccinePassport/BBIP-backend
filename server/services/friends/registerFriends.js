@@ -31,6 +31,10 @@ module.exports = async (req, res, next) => {
 
 const registerFriends = async (followedIdx, followingIdx) => {
     try {
+        await Follow.create({
+            following_id :followedIdx,
+            followed_id : followingIdx
+         });
         return await Follow.create({
            following_id :followingIdx,
            followed_id : followedIdx
