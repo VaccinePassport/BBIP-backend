@@ -23,20 +23,20 @@ const findFriends = async (userIdx) => {
     */
     const followRequests = await Follow.findAll({
         attributes: ['bookmark'],
-        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name'] },],
+        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name'] }],
         where: {
             following_id: userIdx,
         },
     });
     const followRequestList = [];
-    const arr = [];
     for (request of followRequests){
-        arr = [
-            ...request.get("User_followed_id"),
-            {"bookmark" : request.get("bookmark")}
-        ]
-        console.log(arr)
-        followRequestList.push(request.get("User_followed_id"))
+        arr = [request.get("User_followed_id")]
+        console.log("Arr : " + arr[0].get('0'))
+        const result =  {
+            ...arr["0"].dataValues,
+            ...{"bookmark" : request.get("bookmark")}
+        }
+        followRequestList.push(result)
     }
     return followRequestList;
 };
