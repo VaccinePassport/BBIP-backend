@@ -15,6 +15,8 @@ module.exports = async (req, res, next) => {
             attributes: [ 'idx_user' ]
         });
         
+        // register하기 전에 이미 팔로우 관계인지 예외 처리
+        
         await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
 

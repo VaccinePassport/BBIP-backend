@@ -5,7 +5,7 @@ const friendsService = require('../services/friends');
 const router = express.Router();
 
 router.get('/list', friendsService.getFriendList);
-router.get('/', friendsService.searchFriend);
+router.get('/:userId', friendsService.searchFriend);
 router.post('/', friendsService.registerFriends);
 router.patch('/', friendsService.bookmarkFriends);
 router.delete('/', friendsService.deleteFriends);

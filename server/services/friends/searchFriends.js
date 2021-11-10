@@ -2,11 +2,12 @@ const { User } = require('../../models');
 
 module.exports = async (req, res, next) => {
     try {
-        let { user_id } = req.body;
+        let { userId } = req.params;
+        console.log(userId)
 
         const user = await User.findAll({
             where: { 
-                email: user_id,
+                email: userId,
              },
             attributes: [ 'email', 'name' ]
         });
