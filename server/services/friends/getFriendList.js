@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
         const user = res.locals.user;
         const friend = await findFriends(user.idx_user);
         res.json({
-            friend: friend,
+            friend_list: friend,
         });
     } catch (error) {
         console.log(error);
