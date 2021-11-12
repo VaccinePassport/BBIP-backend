@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
         const { friend_id } = req.body
         const user = res.locals.user;
        
-        const followingIdx = await User.findAll({
+        const followedIdx = await User.findAll({
             attributes:['idx_user'],
             where:{
                 email: friend_id
@@ -15,8 +15,8 @@ module.exports = async (req, res, next) => {
 
         await Follow.destroy({
             where : { 
-                following_id : followingIdx[0].get('idx_user'),
-                followed_id : user.idx_user
+                following_id :  user.idx_user,
+                followed_id : followedIdx[0].get('idx_user')
             },
         });
         res.json({
