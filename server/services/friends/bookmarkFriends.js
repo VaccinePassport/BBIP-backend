@@ -17,8 +17,8 @@ module.exports = async (req, res, next) => {
             bookmark: bookmark, 
         },{
             where: { 
-                followed_id: user.idx_user,
-                following_id: followingIdx[0].get('idx_user'),
+                following_id: user.idx_user,
+                followed_id: followingIdx[0].get('idx_user'),
             }}
         );
         
