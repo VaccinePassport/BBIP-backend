@@ -42,6 +42,7 @@ const verifyQr = {
             let result = await sdk.send(true, 'getCertificateByCertKey', args);
             let resultJSON = JSON.parse(result);
             console.log("json : " + resultJSON[0].vaccineKey)
+            console.log(resultJSON[0])
             const user = await verifyQr.findUserNameAndBirth(resultJSON[0].record.userid)
             console.log("user: " , user)
             vaccineList.push({
