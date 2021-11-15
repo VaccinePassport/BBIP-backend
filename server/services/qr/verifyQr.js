@@ -42,6 +42,7 @@ const verifyQr = {
             let result = await sdk.send(true, 'getCertificateByCertKey', args);
             let resultJSON = JSON.parse(result);
             console.log("json : " + resultJSON[0].vaccineKey)
+            const user = verifyQr.findUserNameAndBirth(resultJSON[0].record.userid)
             vaccineList.push({
                 date: resultJSON[0].record.date,
                 location: resultJSON[0].record.location,
@@ -50,11 +51,24 @@ const verifyQr = {
                     resultJSON[0].record.vaccinenumber
                 ),
                 user_id: resultJSON[0].record.userid,
-                vaccine_index: resultJSON[0].vaccineKey,
+                user_name: user[0].get('name'),
+                user_birth: user[0].get('birth')
             });
         }
 
         return vaccineList
+    },
+
+    findUserNameAndBirth: async (userIdx) => {
+        try {
+            return await User.findAll({
+                where: { email: userIdx },
+                attributes: ['name','birth']
+            });
+
+        } catch (error) {
+            return undefined;
+        }
     },
 
     findDeviceToken: async (userIdx) => {
