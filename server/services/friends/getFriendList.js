@@ -22,24 +22,43 @@ const findFriends = async (userIdx) => {
     INNER JOIN bbip.user u ON u.idx_user = f.following_id
     WHERE bookmark = 1 AND followed_id = 16;
     */
-    const followRequests = await Follow.findAll({
+    const followingList = await Follow.findAll({
         attributes: ['bookmark'],
-        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name','birth'], 
+        include: [{ model: User, required: true, as: 'following_list', attributes:['email','name','birth'], 
                     where: {name: {[Op.ne]: null}} }],
         where: {
             following_id: userIdx,
             accept: 1,
         },
     });
-    const followRequestList = [];
-    for (request of followRequests){
-        arr = [request.get("User_followed_id")]
+
+    const followedList = await Follow.findAll({
+        attributes: ['bookmark'],
+        include: [{ model: User, required: true, as: 'followed_list', attributes:['email','name','birth'], 
+                    where: {name: {[Op.ne]: null}} }],
+        where: {
+            followed_id: userIdx,
+            accept: 1,
+        },
+    });
+
+    const friendList = [];
+    for (request of followingList){
+        arr = [request.get("following_list")]
         console.log("Arr : " + arr[0].get('0'))
         const result =  {
             ...arr["0"].dataValues,
             ...{"bookmark" : request.get("bookmark")}
         }
-        followRequestList.push(result)
+        friendList.push(result)
     }
-    return followRequestList;
+    for (request of followedList){
+        arr = [request.get("followed_list")]
+        const result =  {
+            ...arr["0"].dataValues,
+            ...{"bookmark" : request.get("bookmark")}
+        }
+        friendList.push(result)
+    }
+    return friendList;
 };
