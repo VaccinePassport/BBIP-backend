@@ -31,16 +31,44 @@ module.exports = async (req, res, next) => {
     }
 };
 
-const registerFriends = async (followedIdx, followingIdx) => {
+const registerFriends = async (followingIdx, followedIdx) => {
     try {
-        await Follow.create({
-            following_id :followedIdx,
-            followed_id : followingIdx
-         });
-        return await Follow.create({
-           following_id :followingIdx,
-           followed_id : followedIdx
+
+        const exFollow = await Follow.findAll({
+            where: {
+                following_id :followingIdx,
+                followed_id : followedIdx
+            },
         });
+    
+        if (exFollow) {
+           console.log('이미 존재하는 동행인')
+        } else {
+            await Follow.findOrCreate({
+                following_id :followedIdx,
+                followed_id : followingIdx
+             })
+             .spread((user, created) => {
+                 if (created) {
+                     res.json({})
+                     console.log('follow : ', user);
+                 } else {
+                     console.log('이미 존재하는 동행인');
+                 }
+             })
+        }
+
+        // await Follow.findOrCreate({
+        //     following_id :followingIdx,
+        //     followed_id : followedIdx
+        //  })
+        //  .spread((user, created) => {
+        //      if (created) {
+        //         console.log('follow : ', user);
+        //      } else {
+        //         console.log('이미 존재하는 동행인');
+        //      }
+        //  })
     } catch (error) {
         return undefined;
     }
