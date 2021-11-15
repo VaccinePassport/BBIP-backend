@@ -1,4 +1,5 @@
 const { User, Follow } = require('../../models');
+const Op = require('sequelize').Op;
 
 module.exports = async (req, res, next) => {
     try {
@@ -26,7 +27,7 @@ const findFriends = async (userIdx) => {
         include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name', 'birth'], }],
         where: {
             following_id: userIdx,
-            name: {ne: null}
+            name: {[Op.ne]: null}
         },
     });
     const followRequestList = [];
