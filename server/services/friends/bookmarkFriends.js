@@ -13,14 +13,41 @@ module.exports = async (req, res, next) => {
             },
         })
 
-        await Follow.update({ 
-            bookmark: bookmark, 
-        },{
-            where: { 
+        const exFollow = await Follow.findAll({
+            where: {
                 following_id: user.idx_user,
-                followed_id: followingIdx[0].get('idx_user'),
-            }}
-        );
+                followed_id: followingIdx[0].get('idx_user')
+            },
+        });
+        
+        if (exFollow) {
+            await Follow.update({ 
+                following_bookmark: bookmark, 
+            },{
+                where: { 
+                    following_id: user.idx_user,
+                    followed_id: followingIdx[0].get('idx_user'),
+                }}
+            );
+        } else {
+            await Follow.update({ 
+                followed_bookmark: bookmark, 
+            },{
+                where: { 
+                    following_id: followingIdx[0].get('idx_user'),
+                    followed_id: user.idx_user
+                }}
+            );
+        }
+
+        // await Follow.update({ 
+        //     bookmark: bookmark, 
+        // },{
+        //     where: { 
+        //         following_id: user.idx_user,
+        //         followed_id: followingIdx[0].get('idx_user'),
+        //     }}
+        // );
         
         res.status(201).send({});
     } catch (error) {
