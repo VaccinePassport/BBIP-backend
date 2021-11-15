@@ -24,10 +24,10 @@ const findFriends = async (userIdx) => {
     */
     const followRequests = await Follow.findAll({
         attributes: ['bookmark'],
-        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name', 'birth'], }],
+        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name', 'birth'], 
+                    where: {name: {[Op.ne]: null}} }],
         where: {
             following_id: userIdx,
-            name: {[Op.ne]: null}
         },
     });
     const followRequestList = [];
