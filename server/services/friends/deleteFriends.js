@@ -3,24 +3,46 @@ const { userSchema } = require('../../util');
 
 module.exports = async (req, res, next) => {
     try {
-        const { friend_id } = req.body
+        const { friend_id } = req.params
         const user = res.locals.user;
-       
+
         const followedIdx = await User.findAll({
-            attributes:['idx_user'],
-            where:{
+            attributes: ['idx_user'],
+            where: {
                 email: friend_id
             },
         })
 
-        await Follow.destroy({
-            where : { 
-                following_id :  user.idx_user,
-                followed_id : followedIdx[0].get('idx_user')
+        const exFollow = await Follow.findAll({
+            where: {
+                following_id: user.idx_user,
+                followed_id: followedIdx[0].get('idx_user')
             },
         });
-        res.json({
-        });
+        
+        if (exFollow) {
+            await Follow.destroy({
+                where: {
+                    following_id: user.idx_user,
+                    followed_id: followedIdx[0].get('idx_user')
+                },
+            });
+        } else {
+            await Follow.destroy({
+                where: {
+                    following_id: followedIdx[0].get('idx_user'),
+                    followed_id: user.idx_user
+                },
+            });
+        }
+
+        // await Follow.destroy({
+        //     where: {
+        //         following_id: user.idx_user,
+        //         followed_id: followedIdx[0].get('idx_user')
+        //     },
+        // });
+        res.json({});
     } catch (error) {
         console.log(error);
         res.status(400).json({
