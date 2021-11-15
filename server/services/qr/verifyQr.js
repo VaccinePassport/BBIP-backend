@@ -43,6 +43,7 @@ const verifyQr = {
             let resultJSON = JSON.parse(result);
             console.log("json : " + resultJSON[0].vaccineKey)
             const user = verifyQr.findUserNameAndBirth(resultJSON[0].record.userid)
+            console.log("user: " , user)
             vaccineList.push({
                 date: resultJSON[0].record.date,
                 location: resultJSON[0].record.location,
