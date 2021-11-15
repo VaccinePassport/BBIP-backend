@@ -23,7 +23,12 @@ module.exports = function(sequelize, DataTypes) {
         key: 'idx_user'
       }
     },
-    bookmark: {
+    following_bookmark: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0
+    },
+    followed_bookmark: {
       type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0
