@@ -1,6 +1,7 @@
 const sequelize = require('sequelize');
 const verifyJWT = require('../../util/jwt/verifyJWT');
 const { push } = require('../../util');
+const { User } = require('../../models');
 var sdk = require('../../sdk/sdk');
 
 var map = new Map();
