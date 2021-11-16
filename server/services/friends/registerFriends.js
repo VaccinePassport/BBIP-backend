@@ -40,8 +40,9 @@ const registerFriends = async (followingIdx, followedIdx) => {
         });
 
         if (exFollow[0]) {
-            console.log('이미 존재하는 동행인')
+            console.log('이미 존재하는 동행인');
         } else {
+            console.log("테스트테스트")
             await Follow.findOrCreate({
                 following_id: followedIdx,
                 followed_id: followingIdx
@@ -50,7 +51,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
                     plain: true
                 }))
                 console.log('is created : ', created)
-            })
+            });
         }
 
         // await Follow.findOrCreate({
