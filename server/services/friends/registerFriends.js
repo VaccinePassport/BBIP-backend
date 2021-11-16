@@ -72,6 +72,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
         //      }
         //  })
     } catch (error) {
+        console.log(error);
         return undefined;
     }
 };
