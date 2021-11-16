@@ -44,8 +44,10 @@ const registerFriends = async (followingIdx, followedIdx) => {
         } else {
             console.log("테스트테스트")
             await Follow.findOrCreate({
-                following_id: followedIdx,
-                followed_id: followingIdx
+                where: {
+                    following_id: followedIdx,
+                    followed_id: followingIdx
+                }
             }).spread((user, created) => {
                 console.log(user.get({
                     plain: true
