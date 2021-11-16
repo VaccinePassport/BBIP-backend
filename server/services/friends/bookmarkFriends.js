@@ -23,7 +23,7 @@ module.exports = async (req, res, next) => {
         console.log(exFollow);
         console.log(exFollow[0])
 
-        if (exFollow) {
+        if (exFollow[0]) {
             await Follow.update({ 
                 following_bookmark: bookmark, 
             },{
