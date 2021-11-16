@@ -23,7 +23,7 @@ const findFriends = async (userIdx) => {
     WHERE bookmark = 1 AND followed_id = 16;
     */
     const followRequests = await Follow.findAll({
-        attributes: ['bookmark'],
+        attributes: ['following_bookmark'],
         include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name','birth'], 
                     where: {name: {[Op.ne]: null}} }],
         where: {
@@ -33,7 +33,7 @@ const findFriends = async (userIdx) => {
     });
 
     const followRequests2 = await Follow.findAll({
-        attributes: ['bookmark'],
+        attributes: ['followed_bookmark'],
         include: [{ model: User, required: true, as: 'User_following_id', attributes:['email','name','birth'], 
                     where: {name: {[Op.ne]: null}} }],
         where: {
