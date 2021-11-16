@@ -19,7 +19,9 @@ module.exports = async (req, res, next) => {
                 followed_id: followingIdx[0].get('idx_user')
             },
         });
-        
+
+        console.log(exFollow);
+
         if (exFollow) {
             await Follow.update({ 
                 following_bookmark: bookmark, 
