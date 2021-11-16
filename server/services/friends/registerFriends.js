@@ -53,6 +53,17 @@ const registerFriends = async (followingIdx, followedIdx) => {
 
             if (exFollow2[0]) {
                 console.log('이미 존재하는 동행인');
+                await Follow.update(
+                    {
+                        following_id: followingIdx,
+                        followed_id: followedIdx
+                    },
+                    { where: { 
+                        following_id: followedIdx,
+                        followed_id: followingIdx
+                     } }
+                );
+        
             } else {
                 await Follow.create({
                         following_id: followingIdx,
@@ -61,17 +72,6 @@ const registerFriends = async (followingIdx, followedIdx) => {
             }
         }
 
-        // await Follow.findOrCreate({
-        //     following_id :followingIdx,
-        //     followed_id : followedIdx
-        //  })
-        //  .spread((user, created) => {
-        //      if (created) {
-        //         console.log('follow : ', user);
-        //      } else {
-        //         console.log('이미 존재하는 동행인');
-        //      }
-        //  })
     } catch (error) {
         console.log(error);
         return undefined;

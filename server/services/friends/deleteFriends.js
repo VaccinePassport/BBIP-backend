@@ -20,7 +20,7 @@ module.exports = async (req, res, next) => {
             },
         });
 
-        if (exFollow) {
+        if (exFollow[0]) {
             await Follow.destroy({
                 where: {
                     following_id: user.idx_user,
