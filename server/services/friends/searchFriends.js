@@ -1,4 +1,5 @@
 const { User } = require('../../models');
+const Op = require('sequelize').Op;
 
 module.exports = async (req, res, next) => {
     try {
@@ -7,7 +8,7 @@ module.exports = async (req, res, next) => {
 
         const user = await User.findAll({
             where: { 
-                email: userId,
+                [Op.and] : [{email: userId}, {name: {[Op.ne]: null}}],
              },
             attributes: [ 'email', 'name' ]
         });
