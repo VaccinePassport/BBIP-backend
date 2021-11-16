@@ -15,8 +15,6 @@ module.exports = async (req, res, next) => {
             attributes: [ 'idx_user' ]
         });
         
-        // register하기 전에 이미 팔로우 관계인지 예외 처리
-        
         await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
 
@@ -36,7 +34,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
 
         const exFollow = await Follow.findAll({
             where: {
-                following_id :followingIdx,
+                following_id : followingIdx,
                 followed_id : followedIdx,
             },
         });
@@ -47,15 +45,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
             await Follow.findOrCreate({
                 following_id : followedIdx,
                 followed_id : followingIdx
-             })
-             .spread((user, created) => {
-                 if (created) {
-                     res.json({})
-                     console.log('follow : ', user);
-                 } else {
-                     console.log('이미 존재하는 동행인');
-                 }
-             })
+             });
         }
 
         // await Follow.findOrCreate({
