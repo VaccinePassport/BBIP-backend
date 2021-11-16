@@ -8,12 +8,12 @@ var map = new Map();
 const verifyQr = {
     resolveMap: map,
     verifyQr: async (req, res, next) => {
-        try {
-            let { qrVaccine } = req.params;
-            const userIdx = res.locals.user.idx_user;
-            const deviceToken = await verifyQr.findDeviceToken(userIdx)
-            console.log("deviceToken : ", deviceToken[0].get('device_token'))
 
+        let { qrVaccine } = req.params;
+        const userIdx = res.locals.user.idx_user;
+        const deviceToken = await verifyQr.findDeviceToken(userIdx)
+        
+        try {
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
 
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index)
