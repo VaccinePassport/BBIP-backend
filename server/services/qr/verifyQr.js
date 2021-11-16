@@ -11,7 +11,7 @@ const verifyQr = {
         try {
             let { qrVaccine } = req.params;
             const userIdx = res.locals.user.idx_user;
-            const deviceToken = verifyQr.findDeviceToken(userIdx)
+            const deviceToken = await verifyQr.findDeviceToken(userIdx)
             console.log("deviceToken : ", deviceToken)
 
             const vaccine_index = verifyJWT.verifyQrContent(qrVaccine);
@@ -23,7 +23,7 @@ const verifyQr = {
 
             res.json({
                 verified_data: vaccine_info
-            });
+            });ㄹ
 
         } catch (error) {
             console.log(error);
