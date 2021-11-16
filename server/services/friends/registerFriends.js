@@ -12,11 +12,13 @@ module.exports = async (req, res, next) => {
         const friend = await User.findAll({
             where: {
                 email: friend_id,
+                name: { [Op.ne]: null },
             },
             attributes: ['idx_user']
         });
 
-        await registerFriends(user.idx_user, friend[0].get('idx_user'));
+
+        const accept = await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
         if (deviceToken[0]) {
             push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]동행인 등록 요청`, `${user.email}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
@@ -24,7 +26,7 @@ module.exports = async (req, res, next) => {
             throw new Error('디바이스 토큰이 존재하지 않습니다.');
         }
 
-        res.status(200).json({});
+        res.status(200).json({ accept: accept });
     } catch (error) {
         console.log(error);
         res.status(400).json({
@@ -46,7 +48,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
         if (exFollow[0]) {
             console.log('이미 존재하는 동행인');
             console.log(exFollow[0])
-            //-1 -> 0으로 update하기
+            // 탈퇴 후 재가입한 사람의 accept 변경
             if (exFollow[0].get('accept') == -1) {
                 await Follow.update(
                     {
@@ -59,6 +61,9 @@ const registerFriends = async (followingIdx, followedIdx) => {
                         }
                     }
                 );
+                return 0;
+            } else {
+                return exFollow[0].get('accept')
             }
         } else {
             const exFollow2 = await Follow.findAll({
@@ -70,7 +75,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
 
             if (exFollow2[0]) {
                 console.log('이미 존재하는 동행인');
-                // -1 -> 0으로 update
+                // 탈퇴 후 재가입한 사람의 accept 변경
                 if (exFollow2[0].get('accept') == -1) {
                     await Follow.update(
                         {
@@ -85,6 +90,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
                             }
                         }
                     );
+                    return 0;
                 } else {
                     await Follow.update(
                         {
@@ -98,6 +104,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
                             }
                         }
                     );
+                    return exFollow2[0].get('accept')
                 }
 
             } else {
@@ -105,6 +112,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
                     following_id: followingIdx,
                     followed_id: followedIdx
                 })
+                return 0;
             }
         }
 
