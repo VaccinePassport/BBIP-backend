@@ -9,17 +9,17 @@ module.exports = async (req, res, next) => {
         const user = res.locals.user;
 
         const friend = await User.findAll({
-            where: { 
+            where: {
                 email: friend_id,
-             },
-            attributes: [ 'idx_user' ]
+            },
+            attributes: ['idx_user']
         });
-        
+
         await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
 
         push.push(deviceToken, `[BBIP]동행인 등록 요청`, `${friend_id}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
-        
+
         res.status(200).json({});
     } catch (error) {
         console.log(error);
@@ -34,23 +34,23 @@ const registerFriends = async (followingIdx, followedIdx) => {
 
         const exFollow = await Follow.findAll({
             where: {
-                following_id :followingIdx,
-                followed_id : followedIdx,
+                following_id: followingIdx,
+                followed_id: followedIdx,
             },
         });
-        console.log('exFollow: ', exFollow)
+
         if (exFollow[0]) {
-           console.log('이미 존재하는 동행인')
+            console.log('이미 존재하는 동행인')
         } else {
-            await Follow.Create({
-                following_id : followedIdx,
-                followed_id : followingIdx
-             }).spread((user, created) => {
+            await Follow.findOrCreate({
+                following_id: followedIdx,
+                followed_id: followingIdx
+            }).spread((user, created) => {
                 console.log(user.get({
-                  plain: true
+                    plain: true
                 }))
                 console.log('is created : ', created)
-              })
+            })
         }
 
         // await Follow.findOrCreate({
@@ -69,16 +69,16 @@ const registerFriends = async (followingIdx, followedIdx) => {
     }
 };
 
-const findFriendDeviceToken = async(deviceToken) => {
-    try{
+const findFriendDeviceToken = async (deviceToken) => {
+    try {
         return await User.findAll({
-            where: { 
+            where: {
                 email: deviceToken,
-             },
-            attributes: [ 'device_token' ]
+            },
+            attributes: ['device_token']
         });
 
-    }catch (error) {
+    } catch (error) {
         return undefined;
     }
 }
