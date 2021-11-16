@@ -79,8 +79,8 @@ const registerFriends = async (followingIdx, followedIdx) => {
                         },
                         {
                             where: {
-                                following_id: followingIdx,
-                                followed_id: followedIdx
+                                following_id: followedIdx,
+                                followed_id: followingIdx
                             }
                         }
                     );
