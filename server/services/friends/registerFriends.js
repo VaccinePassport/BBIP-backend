@@ -53,7 +53,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
             if (exFollow2[0]) {
                 console.log('이미 존재하는 동행인');
             } else {
-                await Follow.Create({
+                await Follow.create({
                         following_id: followingIdx,
                         followed_id: followedIdx
                 })
