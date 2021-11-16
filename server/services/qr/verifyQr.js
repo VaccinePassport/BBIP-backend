@@ -23,7 +23,7 @@ const verifyQr = {
 
             res.json({
                 verified_data: vaccine_info
-            });ㄹ
+            });
 
         } catch (error) {
             console.log(error);
