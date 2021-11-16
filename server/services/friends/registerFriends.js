@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
         });
 
 
-        const accept = await registerFriends(user.idx_user, friend[0].get('idx_user'));
+        await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
         if (deviceToken[0]) {
             push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]동행인 등록 요청`, `${user.email}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
@@ -26,7 +26,7 @@ module.exports = async (req, res, next) => {
             throw new Error('디바이스 토큰이 존재하지 않습니다.');
         }
 
-        res.status(200).json({ accept: accept });
+        res.status(200).json({ });
     } catch (error) {
         console.log(error);
         res.status(400).json({
@@ -61,10 +61,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
                         }
                     }
                 );
-                return 0;
-            } else {
-                return exFollow[0].get('accept')
-            }
+            } 
         } else {
             const exFollow2 = await Follow.findAll({
                 where: {
@@ -90,7 +87,6 @@ const registerFriends = async (followingIdx, followedIdx) => {
                             }
                         }
                     );
-                    return 0;
                 } else {
                     await Follow.update(
                         {
@@ -104,7 +100,6 @@ const registerFriends = async (followingIdx, followedIdx) => {
                             }
                         }
                     );
-                    return exFollow2[0].get('accept')
                 }
 
             } else {
@@ -112,7 +107,6 @@ const registerFriends = async (followingIdx, followedIdx) => {
                     following_id: followingIdx,
                     followed_id: followedIdx
                 })
-                return 0;
             }
         }
 
