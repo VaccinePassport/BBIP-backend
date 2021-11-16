@@ -1,36 +1,9 @@
 const admin = require('firebase-admin')
-//const admin = require("firebase-admin"); 
+const { Expo } = require('expo-server-sdk');
 let serviceAccount = require("../firebase-bbip-admin.json"); 
-//admin.initializeApp({ credential: admin.credential.cert(serviceAccount), });
-try{ admin.initializeApp() } catch(err){ admin.app() }
-
-var map = new Map();
+//try{ admin.initializeApp() } catch(err){ admin.app() }
 
 const push = {
-    pushAlarm: async (req, res, next) => {
-        let { deviceToken, title, body } = req.body
-        
-        let message = {
-            notification: {
-                title,
-                body
-            },
-            token : deviceToken
-        }
-
-        admin
-            .messaging()
-            .send(message)
-            .then(function (response) {
-                console.log("successfully sent message", response)
-                return res.status(200).json({success:true})
-            })
-            .catch(function(err){
-                console.log("error sending message", err)
-                return res.status(400).json({success:false})
-            });
-    },
-
     push: async(deviceToken, title, body) => {
         let message = {
             notification: {
@@ -43,19 +16,44 @@ const push = {
             console.log("error sending message", err);
         });
     },
-    
-    pushAlarm2: async (deviceTokenList, title, body) => {
-        for (const deviceToken of deviceTokenList) {
-            let message = {
-                notification: {
-                    title,
-                    body
-                },
-                token : deviceToken
+
+    pushAlarm: async (deviceTokenList, title, body) => {
+        let expo = new Expo();
+        for (const deviceToken of deviceTokenList){
+            if (!Expo.isExpoPushToken(deviceToken)) {
+                console.log('[push token error]');
+                continue;
             }
-            await admin.messaging().send(message).catch(err => {
-                console.log("error sending message", err);
+    
+            let message = [];
+            message.push({
+                to: deviceToken,
+                title,
+                body,
+                sound: 'default',
+                channelId: 'notifications',
+                priority: 'high',
+                data: {
+                    landing_page: null,
+                },
             });
+    
+            let chunks = expo.chunkPushNotifications(message);
+            let tickets = [];
+            (async () => {
+                for (let chunk of chunks) {
+                    try {
+                        let ticketChunk = await expo.sendPushNotificationsAsync(
+                            chunk
+                        );
+                        console.log(ticketChunk);
+                        tickets.push(...ticketChunk);
+                    } catch (error) {
+                        console.error(error);
+                        continue;
+                    }
+                }
+            })();
         }
     }
 }
