@@ -22,6 +22,7 @@ module.exports = async (req, res, next) => {
                 name: name,
                 birth: birth,
                 gender: gender,
+                qr_password: null,
             },
             { where: { email: user_id } }
         );
