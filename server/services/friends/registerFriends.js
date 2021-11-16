@@ -42,18 +42,24 @@ const registerFriends = async (followingIdx, followedIdx) => {
         if (exFollow[0]) {
             console.log('이미 존재하는 동행인');
         } else {
-            console.log("테스트테스트")
-            await Follow.findOrCreate({
+
+            const exFollow2 = await Follow.findAll({
                 where: {
                     following_id: followedIdx,
                     followed_id: followingIdx
-                }
-            }).spread((user, created) => {
-                console.log(user.get({
-                    plain: true
-                }))
-                console.log('is created : ', created)
+                },
             });
+
+            if (exFollow2[0]) {
+                console.log('이미 존재하는 동행인');
+            } else {
+                await Follow.Create({
+                    where: {
+                        following_id: followedIdx,
+                        followed_id: followingIdx
+                    }
+                })
+            }
         }
 
         // await Follow.findOrCreate({
