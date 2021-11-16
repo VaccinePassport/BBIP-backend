@@ -21,6 +21,7 @@ module.exports = async (req, res, next) => {
         });
 
         console.log(exFollow);
+        console.log(exFollow[0])
 
         if (exFollow) {
             await Follow.update({ 
