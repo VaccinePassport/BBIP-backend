@@ -9,7 +9,7 @@ router.get('/request', friendsService.getFollowRequests);
 
 router.post('/', friendsService.registerFriends);
 router.patch('/', friendsService.bookmarkFriends);
-router.delete('/', friendsService.deleteFriends);
+router.delete('/:friendId', friendsService.deleteFriends);
 router.get('/vaccination/:friendId', friendsService.getVaccinationInfo);
 
 

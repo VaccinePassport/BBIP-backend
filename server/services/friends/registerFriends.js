@@ -45,7 +45,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
            console.log('이미 존재하는 동행인')
         } else {
             await Follow.findOrCreate({
-                following_id :followedIdx,
+                following_id : followedIdx,
                 followed_id : followingIdx
              })
              .spread((user, created) => {

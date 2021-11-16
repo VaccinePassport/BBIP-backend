@@ -22,9 +22,9 @@ const findFriends = async (userIdx) => {
     INNER JOIN bbip.user u ON u.idx_user = f.following_id
     WHERE bookmark = 1 AND followed_id = 16;
     */
-    const followingList = await Follow.findAll({
+    const followRequests = await Follow.findAll({
         attributes: ['bookmark'],
-        include: [{ model: User, required: true, as: 'following_list', attributes:['email','name','birth'], 
+        include: [{ model: User, required: true, as: 'User_followed_id', attributes:['email','name','birth'], 
                     where: {name: {[Op.ne]: null}} }],
         where: {
             following_id: userIdx,
@@ -32,9 +32,9 @@ const findFriends = async (userIdx) => {
         },
     });
 
-    const followedList = await Follow.findAll({
+    const followRequests2 = await Follow.findAll({
         attributes: ['bookmark'],
-        include: [{ model: User, required: true, as: 'followed_list', attributes:['email','name','birth'], 
+        include: [{ model: User, required: true, as: 'User_following_id', attributes:['email','name','birth'], 
                     where: {name: {[Op.ne]: null}} }],
         where: {
             followed_id: userIdx,
@@ -42,23 +42,24 @@ const findFriends = async (userIdx) => {
         },
     });
 
-    const friendList = [];
-    for (request of followingList){
-        arr = [request.get("following_list")]
+    const followRequestList = [];
+    for (request of followRequests){
+        arr = [request.get("User_followed_id")]
         console.log("Arr : " + arr[0].get('0'))
         const result =  {
             ...arr["0"].dataValues,
             ...{"bookmark" : request.get("bookmark")}
         }
-        friendList.push(result)
+        followRequestList.push(result)
     }
-    for (request of followedList){
-        arr = [request.get("followed_list")]
+    for (request of followRequests2){
+        arr = [request.get("User_following_id")]
+        console.log("Arr : " + arr[0].get('0'))
         const result =  {
             ...arr["0"].dataValues,
             ...{"bookmark" : request.get("bookmark")}
         }
-        friendList.push(result)
+        followRequestList.push(result)
     }
-    return friendList;
+    return followRequestList;
 };

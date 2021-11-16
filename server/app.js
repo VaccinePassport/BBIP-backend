@@ -24,7 +24,7 @@ const {
 const app = express();
 const http = Http.createServer(app);
 
-const PORT = 8080;
+const PORT = 8080; 
 const HOST = '54.180.199.56';
 
 app.get('/', (req, res) => {
