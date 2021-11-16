@@ -45,6 +45,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
 
         if (exFollow[0]) {
             console.log('이미 존재하는 동행인');
+            console.log(exFollow[0])
             //-1 -> 0으로 update하기
             if (exFollow[0].get('accept') == -1) {
                 await Follow.update(
@@ -70,7 +71,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
             if (exFollow2[0]) {
                 console.log('이미 존재하는 동행인');
                 // -1 -> 0으로 update
-                if (exFollow[0].get('accept') == -1) {
+                if (exFollow2[0].get('accept') == -1) {
                     await Follow.update(
                         {
                             accept: 0,
@@ -122,7 +123,7 @@ const findFriendDeviceToken = async (email) => {
                 device_token: { [Op.ne]: null }
             },
             attributes: ['device_token']
-        });
+        }); 
 
     } catch (error) {
         return undefined;
