@@ -45,6 +45,8 @@ const deleteUser = {
             await Follow.update(
                 {
                     accept:-1,
+                    following_bookmark : 0,
+                    followed_bookmark: 0,
                 },
                 { where: { idx_follow: followIdxList, } }
             );
