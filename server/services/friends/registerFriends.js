@@ -38,6 +38,7 @@ const registerFriends = async (followingIdx, followedIdx) => {
                 followed_id : followedIdx,
             },
         });
+        console.log('exFollow: ', exFollow)
         if (exFollow[0]) {
            console.log('이미 존재하는 동행인')
         } else {
