@@ -17,8 +17,9 @@ module.exports = async (req, res, next) => {
 
         await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
-
-        push.push(deviceToken, `[BBIP]동행인 등록 요청`, `${friend_id}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
+        
+        //deviceToken에 들어가는 값이 [User객체] 여서 밑처럼 변경했음, 만약 해당 User가 없는 경우/디바이스 토큰이 null 인 경우..는 고려했는지 안했는지 몰라서 그냥 냅뒀어요 확인하시고 주석 지우셔도 됩니다!
+        push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]동행인 등록 요청`, `${friend_id}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
 
         res.status(200).json({});
     } catch (error) {

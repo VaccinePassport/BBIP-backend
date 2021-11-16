@@ -2,6 +2,7 @@ const express = require('express');
 const Http = require('http');
 var path = require('path');
 const jwt = require('jsonwebtoken');
+const push = require('./util/push');
 
 // firebase - push
 var admin = require('firebase-admin');
@@ -24,7 +25,7 @@ const {
 const app = express();
 const http = Http.createServer(app);
 
-const PORT = 8080; 
+const PORT = 8080;
 const HOST = '54.180.199.56';
 
 app.get('/', (req, res) => {
@@ -51,32 +52,24 @@ app.use(
     versionMiddleware,
     authMiddleware,
     friendsRouter
-);app.use(
-  '/api/:version/device',
-  versionMiddleware,
-  authMiddleware,
-  deviceRouter
+);
+app.use(
+    '/api/:version/device',
+    versionMiddleware,
+    authMiddleware,
+    deviceRouter
 );
 
 app.get('/pushTest', async (req, res, next) => {
-  try {
-    let { deviceToken, title, body } = req.query;
-    console.log(deviceToken, title, body);
-
-    let message = {
-      notification: {
-          title,
-          body
-      },
-      token : deviceToken
+    try {
+        let { deviceToken, title, body } = req.query;
+        push.pushAlarm([deviceToken], title, body);
+        res.json({ result: 'success' });
+        return;
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error });
     }
-    await admin.messaging().send(message)
-    res.json({result:"success"});
-    return;
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({error});
-  }
 });
 
 http.listen(PORT, () => {

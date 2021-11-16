@@ -77,7 +77,7 @@ const groupQr = {
             await Group.bulkCreate(insertValue);
 
             // send push
-            push.pushAlarm2(pushValue, `[BBIP] ${groupNo}그룹) QR 생성 요청`, `${user.email}님이 QR을 생성하고자 합니다. 동의하시나요?`);
+            push.pushAlarm(pushValue, `[BBIP] ${groupNo}그룹) QR 생성 요청`, `${user.email}님이 QR을 생성하고자 합니다. 동의하시나요?`);
             
             // check if friends agree to their personal information
             let pushResult = await groupQr.waitForFriends(groupNo);
