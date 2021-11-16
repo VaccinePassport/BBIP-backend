@@ -25,7 +25,7 @@ module.exports = async (req, res, next) => {
                     res.json({
                         user_id: friend[0].get('email'),
                         user_name: friend[0].get('name'),
-                        accpept : exFollow[0].get('accept') 
+                        accept : exFollow[0].get('accept') 
                     });
                 } else {
                     res.json({
@@ -46,7 +46,7 @@ module.exports = async (req, res, next) => {
                         res.json({
                             user_id: friend[0].get('email'),
                             user_name: friend[0].get('name'),
-                            accpept : exFollow2[0].get('accept') 
+                            accept : exFollow2[0].get('accept') 
                         });
                     } else {
                         res.json({
