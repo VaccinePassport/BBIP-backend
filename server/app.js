@@ -63,7 +63,7 @@ app.use(
 app.get('/pushTest', async (req, res, next) => {
     try {
         let { deviceToken, title, body } = req.query;
-        push.pushAlarm([deviceToken], title, body);
+        push.pushAlarm([deviceToken], title, body, "test");
         res.json({ result: 'success' });
         return;
     } catch (error) {

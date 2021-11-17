@@ -21,7 +21,7 @@ module.exports = async (req, res, next) => {
         await registerFriends(user.idx_user, friend[0].get('idx_user'));
         deviceToken = await findFriendDeviceToken(friend_id)
         if (deviceToken[0]) {
-            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]동행인 등록 요청`, `${user.email}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`);
+            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]동행인 등록 요청`, `${user.email}님이 동행인 등록을 요청하셨습니다. 동의하시나요?`, "companionRequest");
         } else {
             throw new Error('디바이스 토큰이 존재하지 않습니다.');
         }

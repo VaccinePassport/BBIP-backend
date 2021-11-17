@@ -4,20 +4,7 @@ let serviceAccount = require("../firebase-bbip-admin.json");
 //try{ admin.initializeApp() } catch(err){ admin.app() }
 
 const push = {
-    push: async(deviceToken, title, body) => {
-        let message = {
-            notification: {
-                title,
-                body
-            },
-            token : deviceToken
-        }
-        await admin.messaging().send(message).catch(err => {
-            console.log("error sending message", err);
-        });
-    },
-
-    pushAlarm: async (deviceTokenList, title, body) => {
+    pushAlarm: async (deviceTokenList, title, body, page) => {
         let expo = new Expo();
         for (const deviceToken of deviceTokenList){
             if (!Expo.isExpoPushToken(deviceToken)) {
@@ -34,7 +21,7 @@ const push = {
                 channelId: 'notifications',
                 priority: 'high',
                 data: {
-                    landing_page: null,
+                    page,
                 },
             });
     
