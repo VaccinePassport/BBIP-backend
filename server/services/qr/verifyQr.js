@@ -28,7 +28,7 @@ const verifyQr = {
         } catch (error) {
             console.log(error);
             // 푸쉬알림 : 검증 결과 실패
-            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]QR 검증 실패`, `QR 검증이 실패하였습니다.`, "groupQRSuccess");
+            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]QR 검증 실패`, `QR 검증이 실패하였습니다.`, "groupQRFail");
             res.status(400).json({
                 message: '알 수 없는 오류가 발생했습니다.',
             });
