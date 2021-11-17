@@ -19,7 +19,7 @@ const verifyQr = {
             const vaccine_info = await verifyQr.getVaccineByIndex(vaccine_index.vaccine_index)
 
             // 푸쉬알림 : 검증 결과 성공
-            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]QR 검증 완료`, `QR 검증이 성공하였습니다.`);
+            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]QR 검증 완료`, `QR 검증이 성공하였습니다.`, "groupQRSuccess");
 
             res.json({
                 verified_data: vaccine_info
@@ -28,7 +28,7 @@ const verifyQr = {
         } catch (error) {
             console.log(error);
             // 푸쉬알림 : 검증 결과 실패
-            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]QR 검증 실패`, `QR 검증이 실패하였습니다.`);
+            push.pushAlarm([deviceToken[0].get('device_token')], `[BBIP]QR 검증 실패`, `QR 검증이 실패하였습니다.`, "groupQRSuccess");
             res.status(400).json({
                 message: '알 수 없는 오류가 발생했습니다.',
             });
